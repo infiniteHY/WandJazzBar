@@ -1,0 +1,2 @@
+
+0ccb58778c0e6f7f757ad8f216ddd39e5bce67f3	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/path-parse","integrity":null,"time":1773801882377,"size":"262","metadata":{"time":1773801882377,"url":"http://registry.npm.taobao.org/path-parse","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:42 GMT","location":"https://registry.npmmirror.com/path-parse"},"options":{"compress":true},"status":301}}

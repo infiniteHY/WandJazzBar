@@ -1,0 +1,2 @@
+
+ea8414870d56d33d7e00f40d4686f3ee40541568	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@next%2fswc-darwin-arm64","integrity":null,"time":1773801869855,"size":"262","metadata":{"time":1773801869854,"url":"http://registry.npm.taobao.org/@next%2fswc-darwin-arm64","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:29 GMT","location":"https://registry.npmmirror.com/@next%2fswc-darwin-arm64"},"options":{"compress":true},"status":301}}

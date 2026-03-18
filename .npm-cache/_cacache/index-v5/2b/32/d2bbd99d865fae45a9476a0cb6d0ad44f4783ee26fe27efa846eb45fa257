@@ -1,0 +1,2 @@
+
+71b06ac2aaf7e33c9b5ecf9e4106506356f5e3ab	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/prisma","integrity":null,"time":1773801844578,"size":"262","metadata":{"time":1773801844578,"url":"http://registry.npm.taobao.org/prisma","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:04 GMT","location":"https://registry.npmmirror.com/prisma"},"options":{"compress":true},"status":301}}

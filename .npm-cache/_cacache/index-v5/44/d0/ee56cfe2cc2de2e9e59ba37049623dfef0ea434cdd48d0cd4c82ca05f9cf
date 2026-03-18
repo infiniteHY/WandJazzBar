@@ -1,0 +1,2 @@
+
+ccb02760ec8c610491c31c4dfea4e7d1f937ab9d	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@nodelib%2ffs.scandir","integrity":null,"time":1773801884938,"size":"262","metadata":{"time":1773801884938,"url":"http://registry.npm.taobao.org/@nodelib%2ffs.scandir","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:44 GMT","location":"https://registry.npmmirror.com/@nodelib%2ffs.scandir"},"options":{"compress":true},"status":301}}

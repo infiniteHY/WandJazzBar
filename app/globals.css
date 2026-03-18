@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+  --jazz-bg: #0d0d0d;
+  --jazz-bg-light: #1a1a1a;
+  --jazz-surface: #222222;
+  --neon-orange: #ff8c42;
+  --neon-purple: #c084fc;
+  --neon-blue: #38bdf8;
+  --neon-pink: #ff6b9d;
+  --jazz-white: #f5f5f5;
+  --jazz-white-dim: #a0a0a0;
+  --jazz-gold: #d4a853;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--jazz-white);
+  background: var(--jazz-bg);
+  font-family: 'Noto Serif SC', serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(255, 140, 66, 0.4);
+  color: #fff;
+}

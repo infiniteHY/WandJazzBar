@@ -1,0 +1,2 @@
+
+b305c2468b1158e5b2947fd854d232f913cae057	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@next%2fswc-linux-arm64-gnu","integrity":null,"time":1773801870714,"size":"262","metadata":{"time":1773801870714,"url":"http://registry.npm.taobao.org/@next%2fswc-linux-arm64-gnu","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:30 GMT","location":"https://registry.npmmirror.com/@next%2fswc-linux-arm64-gnu"},"options":{"compress":true},"status":301}}

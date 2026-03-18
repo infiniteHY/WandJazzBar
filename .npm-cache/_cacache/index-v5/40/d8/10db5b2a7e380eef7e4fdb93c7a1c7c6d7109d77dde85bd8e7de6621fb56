@@ -1,0 +1,2 @@
+
+870974045cd8585ae3180ef8788b7f3fa88f70e7	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/dlv","integrity":null,"time":1773801872414,"size":"262","metadata":{"time":1773801872414,"url":"http://registry.npm.taobao.org/dlv","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:32 GMT","location":"https://registry.npmmirror.com/dlv"},"options":{"compress":true},"status":301}}

@@ -1,0 +1,2 @@
+
+1f25acd9842c9d67e06fb7164719260543910375	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@next%2fswc-win32-arm64-msvc","integrity":null,"time":1773801871414,"size":"262","metadata":{"time":1773801871414,"url":"http://registry.npm.taobao.org/@next%2fswc-win32-arm64-msvc","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:31 GMT","location":"https://registry.npmmirror.com/@next%2fswc-win32-arm64-msvc"},"options":{"compress":true},"status":301}}

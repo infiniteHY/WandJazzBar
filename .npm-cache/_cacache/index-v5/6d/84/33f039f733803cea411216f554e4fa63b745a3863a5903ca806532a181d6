@@ -1,0 +1,2 @@
+
+2670b6104e1fc947a3b90b561e001bd88089662c	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@next%2fswc-win32-x64-msvc","integrity":null,"time":1773801871493,"size":"262","metadata":{"time":1773801871493,"url":"http://registry.npm.taobao.org/@next%2fswc-win32-x64-msvc","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:31 GMT","location":"https://registry.npmmirror.com/@next%2fswc-win32-x64-msvc"},"options":{"compress":true},"status":301}}

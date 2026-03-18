@@ -1,0 +1,2 @@
+
+fada55a62958eeffff6c0e137626e1762f085236	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/dunder-proto","integrity":null,"time":1773801877837,"size":"262","metadata":{"time":1773801877837,"url":"http://registry.npm.taobao.org/dunder-proto","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:37 GMT","location":"https://registry.npmmirror.com/dunder-proto"},"options":{"compress":true},"status":301}}

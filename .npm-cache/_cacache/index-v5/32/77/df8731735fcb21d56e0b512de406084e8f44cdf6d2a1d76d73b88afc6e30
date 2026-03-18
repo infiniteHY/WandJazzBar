@@ -1,0 +1,2 @@
+
+851109af1c9204c6cc4bbaddcfedc1accabba32f	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/supports-preserve-symlinks-flag","integrity":null,"time":1773801882818,"size":"262","metadata":{"time":1773801882818,"url":"http://registry.npm.taobao.org/supports-preserve-symlinks-flag","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:42 GMT","location":"https://registry.npmmirror.com/supports-preserve-symlinks-flag"},"options":{"compress":true},"status":301}}

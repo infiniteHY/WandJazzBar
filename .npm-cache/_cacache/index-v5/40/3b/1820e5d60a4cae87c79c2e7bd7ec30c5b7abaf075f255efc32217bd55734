@@ -1,0 +1,2 @@
+
+35547e45abb5f01637de275d6389242efc875f12	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@nodelib%2ffs.walk","integrity":null,"time":1773801881658,"size":"262","metadata":{"time":1773801881658,"url":"http://registry.npm.taobao.org/@nodelib%2ffs.walk","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:41 GMT","location":"https://registry.npmmirror.com/@nodelib%2ffs.walk"},"options":{"compress":true},"status":301}}

@@ -1,0 +1,2 @@
+
+cab25fd5033655287c478b32b65db76c9ab565ae	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/@swc%2fhelpers","integrity":null,"time":1773801868895,"size":"262","metadata":{"time":1773801868895,"url":"http://registry.npm.taobao.org/@swc%2fhelpers","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:28 GMT","location":"https://registry.npmmirror.com/@swc%2fhelpers"},"options":{"compress":true},"status":301}}

@@ -1,0 +1,2 @@
+
+e4a11da2c293d042ed1ea930db1e94d4d4fcae81	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/glob-parent","integrity":null,"time":1773801872799,"size":"262","metadata":{"time":1773801872799,"url":"http://registry.npm.taobao.org/glob-parent","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:32 GMT","location":"https://registry.npmmirror.com/glob-parent"},"options":{"compress":true},"status":301}}

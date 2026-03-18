@@ -1,0 +1,2 @@
+
+ed4822a2ca0cdec908daa641cbcdf204e086fb0f	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/commander","integrity":null,"time":1773801882567,"size":"262","metadata":{"time":1773801882567,"url":"http://registry.npm.taobao.org/commander","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:42 GMT","location":"https://registry.npmmirror.com/commander"},"options":{"compress":true},"status":301}}

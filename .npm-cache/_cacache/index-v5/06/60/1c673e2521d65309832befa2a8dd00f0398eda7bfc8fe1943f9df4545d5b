@@ -1,0 +1,2 @@
+
+1d5d4105540bf3510ef0db871b016fcb96a10026	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/call-bind-apply-helpers","integrity":null,"time":1773801877182,"size":"262","metadata":{"time":1773801877182,"url":"http://registry.npm.taobao.org/call-bind-apply-helpers","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:37 GMT","location":"https://registry.npmmirror.com/call-bind-apply-helpers"},"options":{"compress":true},"status":301}}

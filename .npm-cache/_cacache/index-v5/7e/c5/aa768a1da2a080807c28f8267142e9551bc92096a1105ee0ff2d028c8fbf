@@ -1,0 +1,2 @@
+
+d744b4fc57e04cc5196a86a8f8ef516a96eb66df	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/util-deprecate","integrity":null,"time":1773801881975,"size":"262","metadata":{"time":1773801881975,"url":"http://registry.npm.taobao.org/util-deprecate","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:41 GMT","location":"https://registry.npmmirror.com/util-deprecate"},"options":{"compress":true},"status":301}}

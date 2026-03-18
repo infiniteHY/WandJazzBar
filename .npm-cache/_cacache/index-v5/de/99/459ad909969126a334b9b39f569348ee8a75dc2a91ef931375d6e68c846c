@@ -1,0 +1,2 @@
+
+95dcb6a766a65462e241a36216b7b159e42f41b9	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/merge2","integrity":null,"time":1773801881660,"size":"262","metadata":{"time":1773801881660,"url":"http://registry.npm.taobao.org/merge2","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:41 GMT","location":"https://registry.npmmirror.com/merge2"},"options":{"compress":true},"status":301}}

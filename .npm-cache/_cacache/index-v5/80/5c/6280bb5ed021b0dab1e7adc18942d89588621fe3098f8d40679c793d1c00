@@ -1,0 +1,2 @@
+
+53b1ae866cae21fb48c34a2c12a09cad30a0c574	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/automation-events","integrity":null,"time":1773804001927,"size":"262","metadata":{"time":1773804001927,"url":"http://registry.npm.taobao.org/automation-events","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 03:20:01 GMT","location":"https://registry.npmmirror.com/automation-events"},"options":{"compress":true},"status":301}}

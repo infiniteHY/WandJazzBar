@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  secondme_id       String    @unique
+  access_token      String    // 必需字段：访问令牌
+  refresh_token     String?   // 刷新令牌
+  token_expires_at  DateTime? // Token 过期时间
+
+  // 用户资料
+  nickname          String?
+  avatar            String?
+  bio               String?
+
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  // 关联
+  jazz_tracks       JazzTrack[]
+
+  @@map("users")
+}
+
+model JazzTrack {
+  id                String   @id
+  user_id           String?
+  user              User?    @relation(fields: [user_id], references: [id])
+
+  // 调酒参数
+  base_spirit       String   // whiskey | gin | rum | tequila
+  ingredients       String   // JSON array: ["lemon","mint"]
+  mood              String   // calm | sad | mysterious | romantic | energetic
+  mood_intensity    Int      // 1-5
+  ice_level         String   // none | light | heavy
+  shake_level       String   // soft | medium | hard
+
+  // 曲目信息
+  track_name_en     String
+  track_name_zh     String
+  poem_en           String   // JSON array（4行英文诗）
+  poem_zh           String   // JSON array（4行中文诗）
+
+  // 音乐参数
+  bpm               Int
+  key               String   // "C Major", "A Minor"
+  mode              String   // major | minor | diminished | major7 | mixolydian
+  time_signature    String   // "4/4"
+  style             String   // blues | swing | latin | experimental
+
+  // 音乐数据
+  chord_progression String   // JSON array: ["Cmaj7","Am7","Dm7","G7"]
+  melody            String   // JSON array: [{"note":"C4","duration":"4n","time":0}...]
+  instruments       String   // JSON array: ["piano","bass","drums"]
+
+  // 元数据
+  play_count        Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("jazz_tracks")
+  @@index([base_spirit])
+  @@index([mood])
+  @@index([user_id])
+}

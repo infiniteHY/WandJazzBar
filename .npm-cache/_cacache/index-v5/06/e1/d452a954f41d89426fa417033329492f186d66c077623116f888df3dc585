@@ -1,0 +1,2 @@
+
+e846b49f5a9a5bc1286a18e1d1c0701e95621d58	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/next","integrity":null,"time":1773801830656,"size":"262","metadata":{"time":1773801830656,"url":"http://registry.npm.taobao.org/next","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:43:50 GMT","location":"https://registry.npmmirror.com/next"},"options":{"compress":true},"status":301}}

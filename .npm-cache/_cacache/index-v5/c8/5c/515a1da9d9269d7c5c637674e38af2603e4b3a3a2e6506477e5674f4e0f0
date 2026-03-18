@@ -1,0 +1,2 @@
+
+916c1efb043db04e48d7c15a47102ffb122eec35	{"key":"make-fetch-happen:request-cache:http://registry.npm.taobao.org/busboy","integrity":null,"time":1773801868893,"size":"262","metadata":{"time":1773801868892,"url":"http://registry.npm.taobao.org/busboy","reqHeaders":{"accept":"application/json"},"resHeaders":{"content-type":"text/html","date":"Wed, 18 Mar 2026 02:44:28 GMT","location":"https://registry.npmmirror.com/busboy"},"options":{"compress":true},"status":301}}
