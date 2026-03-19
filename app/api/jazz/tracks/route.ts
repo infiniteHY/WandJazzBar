@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { buildJazzTrackId, validateMixingParams, type MixingParams } from '@/lib/jazz/utils'
-import { generateWithGPT, getFallbackTrack } from '@/lib/jazz/generator'
+import { generateWithMiniMax , getFallbackTrack } from '@/lib/jazz/generator'
 
 /**
  * GET /api/jazz/tracks
@@ -56,8 +56,8 @@ export async function GET(request: NextRequest) {
       try {
         console.log('[Jazz API] 生成新音轨:', trackId)
 
-        // 调用 GPT 生成
-        const generated = await generateWithGPT(params)
+        // 调用 MiniMax 生成
+        const generated = await generateWithMiniMax(params)
 
         // 保存到数据库
         track = await prisma.jazzTrack.create({
@@ -69,24 +69,24 @@ export async function GET(request: NextRequest) {
             mood_intensity: params.mood_intensity,
             ice_level: params.ice_level,
             shake_level: params.shake_level,
-            track_name_en: generated.track_name_en,
-            track_name_zh: generated.track_name_zh,
-            poem_en: JSON.stringify(generated.poem_en),
-            poem_zh: JSON.stringify(generated.poem_zh),
-            bpm: generated.bpm,
-            key: generated.key,
-            mode: generated.mode,
-            time_signature: generated.time_signature,
-            style: generated.style,
-            chord_progression: JSON.stringify(generated.chord_progression),
-            melody: JSON.stringify(generated.melody),
-            instruments: JSON.stringify(generated.instruments)
+            track_name_en: generated.music.track_name_en,
+            track_name_zh: generated.music.track_name_zh,
+            poem_en: JSON.stringify(generated.music.poem_en),
+            poem_zh: JSON.stringify(generated.music.poem_zh),
+            bpm: generated.music.bpm,
+            key: generated.music.key,
+            mode: generated.music.mode,
+            time_signature: generated.music.time_signature,
+            style: generated.music.style,
+            chord_progression: JSON.stringify(generated.music.chord_progression),
+            melody: JSON.stringify(generated.music.melody),
+            instruments: JSON.stringify(generated.music.instruments)
           }
         })
 
         console.log('[Jazz API] 音轨生成成功')
       } catch (error) {
-        console.error('[Jazz API] GPT 生成失败，使用降级方案:', error)
+        console.error('[Jazz API] MiniMax 生成失败，使用降级方案:', error)
 
         // 降级：使用模板
         const fallback = getFallbackTrack(params)
@@ -100,18 +100,18 @@ export async function GET(request: NextRequest) {
             mood_intensity: params.mood_intensity,
             ice_level: params.ice_level,
             shake_level: params.shake_level,
-            track_name_en: fallback.track_name_en,
-            track_name_zh: fallback.track_name_zh,
-            poem_en: JSON.stringify(fallback.poem_en),
-            poem_zh: JSON.stringify(fallback.poem_zh),
-            bpm: fallback.bpm,
-            key: fallback.key,
-            mode: fallback.mode,
-            time_signature: fallback.time_signature,
-            style: fallback.style,
-            chord_progression: JSON.stringify(fallback.chord_progression),
-            melody: JSON.stringify(fallback.melody),
-            instruments: JSON.stringify(fallback.instruments)
+            track_name_en: fallback.music.track_name_en,
+            track_name_zh: fallback.music.track_name_zh,
+            poem_en: JSON.stringify(fallback.music.poem_en),
+            poem_zh: JSON.stringify(fallback.music.poem_zh),
+            bpm: fallback.music.bpm,
+            key: fallback.music.key,
+            mode: fallback.music.mode,
+            time_signature: fallback.music.time_signature,
+            style: fallback.music.style,
+            chord_progression: JSON.stringify(fallback.music.chord_progression),
+            melody: JSON.stringify(fallback.music.melody),
+            instruments: JSON.stringify(fallback.music.instruments)
           }
         })
 

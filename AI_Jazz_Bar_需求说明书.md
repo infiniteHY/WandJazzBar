@@ -233,23 +233,57 @@ CRT 效果：CSS scanline overlay（透明条纹遮罩）
 必须输出一个合法的 JSON 对象，字段如下：
 
 {
-  "track_name_en": "英文曲名（古典爵士风，如 Nocturne in Citrus）",
-  "track_name_zh": "中文曲名（2-6字，诗意）",
-  "poem_en": ["第一行", "第二行", "第三行", "第四行"],
-  "poem_zh": ["第一行", "第二行", "第三行", "第四行"],
-  "bpm": 数字（60-160之间），
-  "key": "如 C Major 或 A Minor",
-  "mode": "major | minor | diminished | major7 | mixolydian 之一",
-  "time_signature": "4/4",
-  "style": "blues | swing | latin | experimental 之一",
-  "chord_progression": ["和弦1", "和弦2", "和弦3", "和弦4"],
-  "melody": [
-    { "note": "C4", "duration": "4n", "time": 0 },
-    { "note": "E4", "duration": "8n", "time": 0.5 },
-    ...共16-24个音符
-  ],
-  "instruments": ["piano", "bass", "drums", "saxophone"]
+"id": "base_spirit_ingredient_mood_intensity_ice_shake",
+"input_params": {
+"base_spirit": "whiskey | gin | rum | tequila",
+"ingredients": "lemon | mint | coffee | smoke | honey",
+"mood": "calm | sad | mysterious | romantic | energetic",
+"mood_intensity": "1-5整数",
+"ice_level": "none | light | heavy",
+"shake_level": "soft | medium | hard"
+},
+"tags": {
+"style": "blues | swing | latin | experimental",
+"mode": "major | minor | diminished | major7 | mixolydian",
+"energy_level": "low | medium | high（由bpm决定：<80 low，80-120 medium，>120 high）",
+"rhythm_complexity": "low | medium | high（由shake_level决定）",
+"brightness": "bright | dark | warm | fresh（由ingredient决定）",
+"texture": ["staccato", "legato", "syncopation", "swing"]
+},
+"music": {
+"track_name_en": "英文曲名（古典爵士风，如 Nocturne in ... / Reverie of ... / Serenade of ... / Ballad of ...，禁止现代词汇）",
+"track_name_zh": "中文曲名（2-6字，诗意表达）",
+"poem_en": [
+"第一行（8-12音节，押韵）",
+"第二行（8-12音节，押韵）",
+"第三行（8-12音节，押韵）",
+"第四行（8-12音节，押韵）"
+],
+"poem_zh": [
+"第一行（5-7字）",
+"第二行（5-7字）",
+"第三行（5-7字）",
+"第四行（5-7字）"
+],
+"bpm": "60-160之间的数字",
+"key": "如 C Major 或 A Minor",
+"mode": "major | minor | diminished | major7 | mixolydian",
+"time_signature": "2/4 | 3/4 | 4/4",
+"style": "blues | swing | latin | experimental",
+"chord_progression": ["和弦1", "和弦2", "和弦3", "和弦4"],
+"melody": [
+{ "note": "C4", "duration": "4n", "time": 0 }
+],
+"instruments": ["2-4种乐器，如 piano, bass, drums, saxophone, guitar"]
+},
+"meta": {
+"version": "v1",
+"generated_at": "ISO时间格式（如 2026-03-18T00:00:00Z）",
+"generator": "minimax",
+"valid": true
 }
+}
+
 
 【作曲规则】
 
@@ -367,45 +401,80 @@ function buildId({ base_spirit, ingredients, mood, mood_intensity, ice_level, sh
 
 ```json
 {
-  "track_name_en": "Nocturne in Citrus Smoke",
-  "track_name_zh": "柑烟夜曲",
-  "poem_en": [
-    "The night hums low in citrus air,",
-    "A smoky whisper lingers there,",
-    "Between the glass and fading light,",
-    "Your silence turns to song tonight."
-  ],
-  "poem_zh": [
-    "柑香浮夜色，",
-    "烟影落杯中，",
-    "未语心先动，",
-    "今宵化作歌。"
-  ],
-  "bpm": 72,
-  "key": "A Minor",
-  "mode": "minor",
-  "time_signature": "4/4",
-  "style": "blues",
-  "chord_progression": ["Am7", "Dm7", "G7", "Cmaj7"],
-  "melody": [
-    { "note": "A4", "duration": "4n", "time": 0 },
-    { "note": "G4", "duration": "8n", "time": 1 },
-    { "note": "E4", "duration": "8n", "time": 1.5 },
-    { "note": "F4", "duration": "4n", "time": 2 },
-    { "note": "D4", "duration": "4n", "time": 3 },
-    { "note": "E4", "duration": "4n", "time": 4 },
-    { "note": "C4", "duration": "8n", "time": 5 },
-    { "note": "D4", "duration": "8n", "time": 5.5 },
-    { "note": "E4", "duration": "2n", "time": 6 },
-    { "note": "A3", "duration": "4n", "time": 8 },
-    { "note": "B3", "duration": "8n", "time": 9 },
-    { "note": "C4", "duration": "8n", "time": 9.5 },
-    { "note": "D4", "duration": "4n", "time": 10 },
-    { "note": "E4", "duration": "4n", "time": 11 },
-    { "note": "G4", "duration": "4n", "time": 12 },
-    { "note": "A4", "duration": "2n", "time": 13 }
-  ],
-  "instruments": ["piano", "bass", "drums", "saxophone"]
+  "id": "whiskey_lemon_sad_3_heavy_medium",
+
+  "input_params": {
+    "base_spirit": "whiskey",
+    "ingredients": ["lemon"],
+    "mood": "sad",
+    "mood_intensity": 3,
+    "ice_level": "heavy",
+    "shake_level": "medium"
+  },
+
+  "tags": {
+    "style": "blues",
+    "mode": "minor",
+    "energy_level": "low",
+    "rhythm_complexity": "medium",
+    "brightness": "bright",
+    "texture": ["staccato", "syncopation"]
+  },
+
+  "music": {
+    "track_name_en": "Nocturne in Bitter Citrus",
+    "track_name_zh": "柠夜曲",
+
+    "poem_en": [
+      "A bitter note in silent air,",
+      "The glass reflects a dim despair,",
+      "Through fractured light the shadows bend,",
+      "A lonely tune without an end."
+    ],
+
+    "poem_zh": [
+      "柠影浮残夜，",
+      "孤杯映微凉，",
+      "风动旧时梦，",
+      "曲终人未央。"
+    ],
+
+    "bpm": 68,
+    "key": "A Minor",
+    "mode": "minor",
+    "time_signature": "4/4",
+    "style": "blues",
+
+    "chord_progression": ["Am7", "Dm7", "E7", "Am7"],
+
+    "melody": [
+      { "note": "A4", "duration": "4n", "time": 0 },
+      { "note": "C5", "duration": "8n", "time": 1 },
+      { "note": "E5", "duration": "8n", "time": 1.5 },
+      { "note": "G5", "duration": "4n", "time": 2 },
+      { "note": "E5", "duration": "4n", "time": 3 },
+      { "note": "D5", "duration": "4n", "time": 4 },
+      { "note": "C5", "duration": "8n", "time": 5 },
+      { "note": "A4", "duration": "8n", "time": 5.5 },
+      { "note": "G4", "duration": "4n", "time": 6 },
+      { "note": "E4", "duration": "2n", "time": 7 },
+      { "note": "A3", "duration": "4n", "time": 9 },
+      { "note": "C4", "duration": "8n", "time": 10 },
+      { "note": "D4", "duration": "8n", "time": 10.5 },
+      { "note": "E4", "duration": "4n", "time": 11 },
+      { "note": "G4", "duration": "4n", "time": 12 },
+      { "note": "A4", "duration": "2n", "time": 13 }
+    ],
+
+    "instruments": ["piano", "bass", "drums", "saxophone"]
+  },
+
+  "meta": {
+    "version": "v1",
+    "generated_at": "2026-03-18T00:00:00Z",
+    "generator": "gpt-5.3",
+    "valid": true
+  }
 }
 ```
 
