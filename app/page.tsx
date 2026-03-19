@@ -1,129 +1,144 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function Home() {
+function LoginPage() {
   const router = useRouter()
-  const [status, setStatus] = useState<'idle' | 'waiting'>('idle')
+  const searchParams = useSearchParams()
+  const [status, setStatus] = useState<'checking' | 'idle' | 'exchanging' | 'error'>('checking')
   const [error, setError] = useState('')
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const popupRef = useRef<Window | null>(null)
 
-  function stopPolling() {
-    if (pollRef.current) {
-      clearInterval(pollRef.current)
-      pollRef.current = null
-    }
-  }
+  useEffect(() => {
+    const code = searchParams.get('code')
 
-  function startPolling() {
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await fetch('/api/auth/check')
-        const data = await res.json()
-        if (data.authenticated) {
-          stopPolling()
-          router.push('/jazz-bar')
-        }
-      } catch {}
-
-      // 弹窗被关闭但还没完成
-      if (popupRef.current?.closed) {
-        stopPolling()
-        setStatus('idle')
-        setError('登录窗口已关闭，请重试')
-      }
-    }, 1500)
-  }
-
-  function handleLogin() {
-    setError('')
-    const popup = window.open(
-      '/api/auth/login',
-      'secondme-login',
-      'width=520,height=680,left=200,top=80'
-    )
-
-    if (!popup) {
-      setError('弹窗被拦截，请允许弹窗后重试')
+    // SecondMe 回调带来了授权码，自动兑换
+    if (code) {
+      setStatus('exchanging')
+      fetch('/api/auth/exchange', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            router.replace('/jazz-bar')
+          } else {
+            setError(data.error || '授权失败，请重试')
+            setStatus('error')
+          }
+        })
+        .catch(() => { setError('网络错误，请重试'); setStatus('error') })
       return
     }
 
-    popupRef.current = popup
-    setStatus('waiting')
-    startPolling()
+    // 无授权码：检查是否已登录
+    fetch('/api/auth/check')
+      .then(r => r.json())
+      .then(d => {
+        if (d.authenticated) router.replace('/jazz-bar')
+        else setStatus('idle')
+      })
+      .catch(() => setStatus('idle'))
+  }, [router, searchParams])
+
+  if (status === 'checking' || status === 'exchanging') {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🎷</div>
+          <p style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 9, color: 'rgba(255,140,66,0.6)', letterSpacing: 2 }}>
+            {status === 'exchanging' ? 'AUTHORIZING...' : 'LOADING...'}
+          </p>
+        </div>
+      </div>
+    )
   }
 
-  // 监听 postMessage（弹窗回调成功时发出）
-  useEffect(() => {
-    function onMessage(event: MessageEvent) {
-      if (event.origin !== window.location.origin) return
-      if (event.data?.type === 'secondme_auth_done') {
-        stopPolling()
-        router.push('/jazz-bar')
-      }
-    }
-    window.addEventListener('message', onMessage)
-    return () => {
-      window.removeEventListener('message', onMessage)
-      stopPolling()
-    }
-  }, [router])
-
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a1a1a' }}>
-      <div className="px-8 py-10 rounded-2xl" style={{ background: '#2b2b2b', maxWidth: 420, width: '100%' }}>
+    <div style={{
+      minHeight: '100vh', background: '#0d0d0d',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px'
+    }}>
+      <div style={{ width: '100%', maxWidth: 400 }}>
 
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🎷</div>
-          <h1 className="text-2xl font-bold mb-1" style={{ color: '#ff8c42', fontFamily: 'serif', letterSpacing: 2 }}>
-            Wand Jazz Bar
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <div style={{ fontSize: 52, marginBottom: 14 }}>🎷</div>
+          <h1 style={{
+            fontFamily: "'Press Start 2P', cursive", fontSize: 14,
+            color: '#ff8c42', letterSpacing: 2, marginBottom: 10,
+            textShadow: '0 0 24px rgba(255,140,66,0.5)'
+          }}>
+            WAND JAZZ BAR
           </h1>
-          <p className="text-sm" style={{ color: '#666' }}>像素爵士酒吧 · 调一杯专属音乐</p>
+          <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 13, color: 'rgba(160,160,160,0.5)' }}>
+            像素爵士酒吧 · 调一杯专属音乐
+          </p>
         </div>
 
-        <div style={{ borderTop: '1px solid #3a3a3a', marginBottom: 28 }} />
+        <div style={{
+          background: 'rgba(18,18,18,0.95)',
+          border: '1px solid rgba(255,140,66,0.18)',
+          borderRadius: 14, padding: '32px 28px',
+          boxShadow: '0 0 40px rgba(255,140,66,0.05)'
+        }}>
+          {error && (
+            <div style={{
+              marginBottom: 20, padding: '10px 14px',
+              background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.25)',
+              borderRadius: 8, color: '#ff6b6b', fontSize: 12, lineHeight: 1.6
+            }}>
+              {error}
+            </div>
+          )}
 
-        {error && (
-          <div className="mb-4 px-3 py-2 rounded text-sm" style={{ background: '#3a1a1a', color: '#ff6b6b', border: '1px solid #5a2a2a' }}>
-            {error}
-          </div>
-        )}
+          <p style={{
+            fontFamily: "'Press Start 2P', cursive", fontSize: 8,
+            color: 'rgba(255,140,66,0.4)', textAlign: 'center',
+            marginBottom: 18, letterSpacing: 2
+          }}>
+            SIGN IN TO ENTER
+          </p>
+          <p style={{
+            fontSize: 13, color: 'rgba(200,200,200,0.6)',
+            textAlign: 'center', marginBottom: 28, lineHeight: 2,
+            fontFamily: "'Noto Serif SC', serif"
+          }}>
+            使用 SecondMe 账号登录<br />
+            完成授权后自动进入酒吧
+          </p>
 
-        {status === 'idle' ? (
-          <>
-            <p className="text-sm mb-6 text-center" style={{ color: '#aaa', lineHeight: 1.9 }}>
-              使用 SecondMe 账号登录<br />
-              登录完成后自动进入酒吧
-            </p>
-            <button
-              onClick={handleLogin}
-              className="block w-full py-3 px-6 rounded-lg font-semibold text-center"
-              style={{ background: '#ff8c42', color: '#1a1a1a', cursor: 'pointer' }}
-            >
-              使用 SecondMe 登录
-            </button>
-          </>
-        ) : (
-          <div className="text-center py-4">
-            <div className="mb-4" style={{ color: '#ff8c42', fontSize: 28 }}>⏳</div>
-            <p className="text-sm mb-2" style={{ color: '#f5f5f5' }}>
-              SecondMe 登录窗口已打开
-            </p>
-            <p className="text-xs mb-6" style={{ color: '#666' }}>
-              在弹窗中完成登录后将自动跳转
-            </p>
-            <button
-              onClick={() => { stopPolling(); popupRef.current?.close(); setStatus('idle') }}
-              className="text-sm"
-              style={{ color: '#555' }}
-            >
-              取消
-            </button>
-          </div>
-        )}
+          <a
+            href="/api/auth/login"
+            style={{
+              display: 'block', textAlign: 'center', textDecoration: 'none',
+              padding: '13px 24px', borderRadius: 8,
+              background: '#ff8c42', color: '#0d0d0d',
+              fontFamily: "'Press Start 2P', cursive", fontSize: 9,
+              letterSpacing: 1, boxShadow: '0 0 20px rgba(255,140,66,0.35)'
+            }}
+          >
+            使用 SecondMe 登录 →
+          </a>
+        </div>
+
+        <p style={{
+          textAlign: 'center', marginTop: 24,
+          fontFamily: "'Press Start 2P', cursive", fontSize: 7,
+          color: 'rgba(160,160,160,0.15)', letterSpacing: 1
+        }}>
+          POWERED BY SECONDME
+        </p>
       </div>
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <LoginPage />
+    </Suspense>
   )
 }

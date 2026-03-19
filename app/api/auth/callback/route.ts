@@ -3,8 +3,7 @@ import { exchangeCodeForToken, getSecondMeUser } from '@/lib/secondme'
 import { cookies } from 'next/headers'
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const code = searchParams.get('code')
+  const code = request.nextUrl.searchParams.get('code')
 
   if (!code) {
     return NextResponse.redirect(new URL('/?error=no_code', request.url))
@@ -16,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     cookies().set('sm_token', tokenData.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
@@ -24,16 +23,16 @@ export async function GET(request: NextRequest) {
 
     cookies().set('sm_user_name', userData.name || '', {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
     })
 
-    // 跳转到关闭弹窗的中转页
-    return NextResponse.redirect(new URL('/auth/done', request.url))
+    return NextResponse.redirect(new URL('/jazz-bar', request.url))
   } catch (error) {
-    console.error('OAuth callback error:', error)
-    return NextResponse.redirect(new URL('/?error=auth_failed', request.url))
+    const msg = error instanceof Error ? error.message : 'auth_failed'
+    console.error('OAuth callback error:', msg)
+    return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(msg)}`, request.url))
   }
 }
