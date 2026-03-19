@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { buildJazzTrackId, validateMixingParams, type MixingParams } from '@/lib/jazz/utils'
 import { generateWithMiniMax , getFallbackTrack } from '@/lib/jazz/generator'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const revalidate = 0
+
 /**
  * GET /api/jazz/tracks
  *
