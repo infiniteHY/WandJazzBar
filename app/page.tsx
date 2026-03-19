@@ -78,7 +78,7 @@ export default function Home() {
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🎷</div>
           <h1 className="text-2xl font-bold mb-1" style={{ color: '#ff8c42', fontFamily: 'serif', letterSpacing: 2 }}>
-            AI Jazz Bar
+            Wand Jazz Bar
           </h1>
           <p className="text-sm" style={{ color: '#666' }}>像素爵士酒吧 · 调一杯专属音乐</p>
         </div>
