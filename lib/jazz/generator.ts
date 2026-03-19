@@ -1,131 +1,268 @@
-import OpenAI from 'openai'
+import Anthropic from "@anthropic-ai/sdk"
 import { MixingParams } from './utils'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+/**
+ * ⚠️ 填你的 key
+ */
+const client = new Anthropic({
+  apiKey: "sk-api-KtLO9hIGqO_Hq4CV-C1_t7E7hAyjbO9t8u96fE-8JDEdnqJCdUCp30F3U4L3P5IfmocCt4EK8T1C2LmXc53oMZOdSGEqSfIW7UW2LDlzrPIyAeKPO1sazeM", // ← 填
+  baseURL: "https://api.minimax.io/anthropic"
 })
 
 export interface GeneratedTrack {
-  track_name_en: string
-  track_name_zh: string
-  poem_en: string[]
-  poem_zh: string[]
-  bpm: number
-  key: string
-  mode: string
-  time_signature: string
-  style: string
-  chord_progression: string[]
-  melody: Array<{ note: string; duration: string; time: number }>
-  instruments: string[]
+  id: string
+
+  input_params: {
+    base_spirit: string
+    ingredients: string[]
+    mood: string
+    mood_intensity: number
+    ice_level: string
+    shake_level: string
+  }
+
+  tags: {
+    style: string
+    mode: string
+    energy_level: string
+    rhythm_complexity: string
+    brightness: string
+    texture: string[]
+  }
+
+  music: {
+    track_name_en: string
+    track_name_zh: string
+    poem_en: string[]
+    poem_zh: string[]
+    bpm: number
+    key: string
+    mode: string
+    time_signature: string
+    style: string
+    chord_progression: string[]
+    melody: Array<{
+      note: string
+      duration: string
+      time: number
+    }>
+    instruments: string[]
+  }
+
+  meta: {
+    version: string
+    generated_at: string
+    generator: string
+    valid: boolean
+  }
 }
 
 /**
  * 构造系统提示词
  */
 function buildSystemPrompt(): string {
-  return `你是一位精通爵士乐的作曲家和调酒师，专门为调酒创作对应的爵士音乐。
+  return `你是一位精通爵士乐作曲的 AI 作曲家，同时具备深厚的鸡尾酒调配美学品味。
+你的任务是：根据用户提供的调酒参数，生成一段完整的爵士乐曲结构，并以严格的 JSON 格式输出，不包含任何解释文字。
 
-你的任务：根据用户提供的调酒参数（基酒、辅料、情绪等），生成一首完整的爵士乐曲，包括：
-1. 曲名（中英文）
-2. 四行诗（中英文，描述调酒与音乐的意境）
-3. 音乐参数（BPM、调式、风格）
-4. 和弦进行（4-8个爵士和弦）
-5. 旋律（16-24个音符）
+【输出格式要求】
+必须输出一个合法的 JSON 对象，字段如下：
 
-## 参数到音乐的映射规则
-
-### 基酒 → 风格和BPM
-- whiskey: Blues, BPM 60-80, 蓝调音阶
-- gin: Light Swing, BPM 100-130
-- rum: Latin Jazz, BPM 100-140
-- tequila: Experimental, BPM 130-160
-
-### 情绪 → 调式
-- calm: Major, 平和和弦
-- sad: Minor, 下行旋律
-- mysterious: Diminished, 不稳定和弦
-- romantic: Major 7th, 温柔延伸和弦
-- energetic: Mixolydian, 推进感
-
-### 情绪强度 → 力度和复杂度
-- 1-2: 简单和弦，平稳旋律
-- 3: 标准爵士进行
-- 4-5: 复杂和弦，大跳旋律
-
-### 冰块 → 律动
-- none: Legato 连奏
-- light: 适度停顿
-- heavy: Syncopation 切分
-
-### 摇晃 → 节奏感
-- soft: 平稳律动
-- medium: Swing feel
-- hard: 三连音/不规则重音
-
-### 辅料 → 音色特点
-- lemon: 高音区 staccato
-- smoke: 低音区 blues 滑音
-- honey: Legato 柔和
-- coffee: 复杂延伸和弦
-- mint: 装饰音 swing
-
-## 输出格式
-
-必须返回有效的 JSON 对象，格式如下：
-
-\`\`\`json
 {
-  "track_name_en": "Whiskey Blues in A Minor",
-  "track_name_zh": "A小调威士忌蓝调",
-  "poem_en": [
-    "Line 1 in English",
-    "Line 2 in English",
-    "Line 3 in English",
-    "Line 4 in English"
-  ],
-  "poem_zh": [
-    "中文第一行",
-    "中文第二行",
-    "中文第三行",
-    "中文第四行"
-  ],
-  "bpm": 72,
-  "key": "A Minor",
-  "mode": "minor",
-  "time_signature": "4/4",
-  "style": "blues",
-  "chord_progression": ["Am7", "Dm7", "G7", "Cmaj7", "Am7", "F7", "E7", "Am7"],
-  "melody": [
-    { "note": "A4", "duration": "4n", "time": 0 },
-    { "note": "G4", "duration": "8n", "time": 1 },
-    { "note": "E4", "duration": "8n", "time": 1.5 },
-    { "note": "F4", "duration": "4n", "time": 2 },
-    { "note": "D4", "duration": "4n", "time": 3 },
-    { "note": "E4", "duration": "4n", "time": 4 },
-    { "note": "C4", "duration": "8n", "time": 5 },
-    { "note": "D4", "duration": "8n", "time": 5.5 },
-    { "note": "E4", "duration": "2n", "time": 6 },
-    { "note": "A3", "duration": "4n", "time": 8 },
-    { "note": "B3", "duration": "8n", "time": 9 },
-    { "note": "C4", "duration": "8n", "time": 9.5 },
-    { "note": "D4", "duration": "4n", "time": 10 },
-    { "note": "E4", "duration": "4n", "time": 11 },
-    { "note": "G4", "duration": "4n", "time": 12 },
-    { "note": "A4", "duration": "2n", "time": 13 }
-  ],
-  "instruments": ["piano", "bass", "drums", "saxophone"]
+"id": "base_spirit_ingredient_mood_intensity_ice_shake",
+"input_params": {
+"base_spirit": "whiskey | gin | rum | tequila",
+"ingredients": "lemon | mint | coffee | smoke | honey",
+"mood": "calm | sad | mysterious | romantic | energetic",
+"mood_intensity": "1-5整数",
+"ice_level": "none | light | heavy",
+"shake_level": "soft | medium | hard"
+},
+"tags": {
+"style": "blues | swing | latin | experimental",
+"mode": "major | minor | diminished | major7 | mixolydian",
+"energy_level": "low | medium | high（由bpm决定：<80 low，80-120 medium，>120 high）",
+"rhythm_complexity": "low | medium | high（由shake_level决定）",
+"brightness": "bright | dark | warm | fresh（由ingredient决定）",
+"texture": ["staccato", "legato", "syncopation", "swing"]
+},
+"music": {
+"track_name_en": "英文曲名（古典爵士风，如 Nocturne in ... / Reverie of ... / Serenade of ... / Ballad of ...，禁止现代词汇）",
+"track_name_zh": "中文曲名（2-6字，诗意表达）",
+"poem_en": [
+"第一行（8-12音节，押韵）",
+"第二行（8-12音节，押韵）",
+"第三行（8-12音节，押韵）",
+"第四行（8-12音节，押韵）"
+],
+"poem_zh": [
+"第一行（5-7字）",
+"第二行（5-7字）",
+"第三行（5-7字）",
+"第四行（5-7字）"
+],
+"bpm": "60-160之间的数字",
+"key": "如 C Major 或 A Minor",
+"mode": "major | minor | diminished | major7 | mixolydian",
+"time_signature": "2/4 | 3/4 | 4/4",
+"style": "blues | swing | latin | experimental",
+"chord_progression": ["和弦1", "和弦2", "和弦3", "和弦4"],
+"melody": [
+{ "note": "C4", "duration": "4n", "time": 0 }
+],
+"instruments": ["2-4种乐器，如 piano, bass, drums, saxophone, guitar"]
+},
+"meta": {
+"version": "v1",
+"generated_at": "ISO时间格式（如 2026-03-18T00:00:00Z）",
+"generator": "minimax",
+"valid": true
 }
-\`\`\`
+}
 
-## 重要约束
 
-1. 和弦必须是标准爵士和弦记号（如 Cmaj7, Am7, Dm7, G7, F#dim7 等）
-2. 旋律音符范围：C2-C6
-3. 音符时长：1n（全音符）, 2n（二分音符）, 4n（四分音符）, 8n（八分音符）
-4. 时间轴（time）必须递增，单位为拍
-5. 旋律应符合所选调式的音阶
-6. 四行诗应有意境，避免直白描述`
+【作曲规则】
+
+1. 基酒 → 风格基调
+   - whiskey → Blues / Slow Jazz，BPM 60-80，大量蓝调音阶
+   - gin → Light Swing，BPM 100-130，轻盈跳跃
+   - rum → Latin Jazz，BPM 100-140，切分节奏
+   - tequila → Experimental / Fast，BPM 130-160，不规则节奏
+
+2. 情绪 → 调式选择
+   - calm → Major，平和进行
+   - sad → Minor，下行旋律
+   - mysterious → Diminished，不稳定和弦
+   - romantic → Major 7th，温柔张力
+   - energetic → Mixolydian，推进感
+
+3. 情绪强度（1-5）→ 旋律起伏幅度
+   - 1-2：旋律平稳，音程小（2-3度跳进）
+   - 3：适中起伏（3-5度）
+   - 4-5：大跳进，戏剧化（6-8度）
+
+4. 配料 → 音乐细节
+   - lemon（柠檬）→ staccato 断奏，明亮音符（高音区）
+   - mint（薄荷）→ swing feel，加入装饰音
+   - coffee（咖啡）→ 增加复杂和弦（如 #11, b9）
+   - smoke（烟熏）→ 低音区强调，蓝调滑音
+   - honey（蜂蜜）→ legato 连奏，柔和力度
+
+5. 冰量 → 节奏处理
+   - none（无冰）→ 连贯 legato，无明显停顿
+   - light（少冰）→ 适度休止符
+   - heavy（多冰）→ 切分节奏，syncopation，加入 break
+
+6. Shake 强度 → 节奏复杂度
+   - soft → 平稳 4/4，基础律动
+   - medium → 加入 swing 八分音符
+   - hard → 三连音、切分、不规则重音
+
+【命名规则】
+
+英文曲名：
+- 必须有古典爵士/文学气质
+- 模式参考：Nocturne in [形容词]，Reverie of [意象]，[形容词] Serenade，Ballad of [意象]
+- 禁止使用现代感词汇（如 Mix, Blend, Cool, Vibe）
+
+中文曲名：
+- 2-6字，诗意
+- 可参考：夜色、烟雨、弦断、微醺、月光等意象
+
+四行诗规则：
+- 英文：每行 8-12 音节，押韵（ABAB 或 AABB），爵士夜晚氛围
+- 中文：每行 5-7 字，意象化，不可直译英文，独立成诗
+- 两组诗必须均为4行
+
+【melody 格式说明】
+- note：标准 MIDI 音名，如 C4、D#4、Bb3
+- duration：Tone.js 时值格式，如 "4n"（四分音符）、"8n"（八分音符）、"2n"（二分音符）、"16n"（十六分音符）
+- time：相对于起始的时间偏移（单位：拍），数字类型
+
+【严格约束】
+- 只输出 JSON，不含任何 Markdown 代码块标记（不要json）
+- JSON 必须合法，可直接 JSON.parse()
+- melody 数组必须有 16-24 个元素
+- chord_progression 必须有 4 个和弦
+- instruments 必须包含 2-4 种乐器
+
+- 示例输出 JSON
+
+{
+  "id": "whiskey_lemon_sad_3_heavy_medium",
+
+  "input_params": {
+    "base_spirit": "whiskey",
+    "ingredients": ["lemon"],
+    "mood": "sad",
+    "mood_intensity": 3,
+    "ice_level": "heavy",
+    "shake_level": "medium"
+  },
+
+  "tags": {
+    "style": "blues",
+    "mode": "minor",
+    "energy_level": "low",
+    "rhythm_complexity": "medium",
+    "brightness": "bright",
+    "texture": ["staccato", "syncopation"]
+  },
+
+  "music": {
+    "track_name_en": "Nocturne in Bitter Citrus",
+    "track_name_zh": "柠夜曲",
+
+    "poem_en": [
+      "A bitter note in silent air,",
+      "The glass reflects a dim despair,",
+      "Through fractured light the shadows bend,",
+      "A lonely tune without an end."
+    ],
+
+    "poem_zh": [
+      "柠影浮残夜，",
+      "孤杯映微凉，",
+      "风动旧时梦，",
+      "曲终人未央。"
+    ],
+
+    "bpm": 68,
+    "key": "A Minor",
+    "mode": "minor",
+    "time_signature": "4/4",
+    "style": "blues",
+
+    "chord_progression": ["Am7", "Dm7", "E7", "Am7"],
+
+    "melody": [
+      { "note": "A4", "duration": "4n", "time": 0 },
+      { "note": "C5", "duration": "8n", "time": 1 },
+      { "note": "E5", "duration": "8n", "time": 1.5 },
+      { "note": "G5", "duration": "4n", "time": 2 },
+      { "note": "E5", "duration": "4n", "time": 3 },
+      { "note": "D5", "duration": "4n", "time": 4 },
+      { "note": "C5", "duration": "8n", "time": 5 },
+      { "note": "A4", "duration": "8n", "time": 5.5 },
+      { "note": "G4", "duration": "4n", "time": 6 },
+      { "note": "E4", "duration": "2n", "time": 7 },
+      { "note": "A3", "duration": "4n", "time": 9 },
+      { "note": "C4", "duration": "8n", "time": 10 },
+      { "note": "D4", "duration": "8n", "time": 10.5 },
+      { "note": "E4", "duration": "4n", "time": 11 },
+      { "note": "G4", "duration": "4n", "time": 12 },
+      { "note": "A4", "duration": "2n", "time": 13 }
+    ],
+
+    "instruments": ["piano", "bass", "drums", "saxophone"]
+  },
+
+  "meta": {
+    "version": "v1",
+    "generated_at": "2026-03-18T00:00:00Z",
+    "generator": "minimax",
+    "valid": true
+  }
+}`
 }
 
 /**
@@ -134,47 +271,90 @@ function buildSystemPrompt(): string {
 function buildUserPrompt(params: MixingParams): string {
   return `请为以下调酒组合创作一首爵士乐：
 
-**基酒**: ${params.base_spirit}
-**辅料**: ${params.ingredients.join(', ')}
-**情绪**: ${params.mood}（强度 ${params.mood_intensity}/5）
-**冰块**: ${params.ice_level}
-**摇晃方式**: ${params.shake_level}
+base_spirit: ${params.base_spirit}
+ingredients: ${JSON.stringify(params.ingredients)}
+mood: ${params.mood}
+mood_intensity: ${params.mood_intensity}/5
+ice_level: ${params.ice_level}
+shake_level: ${params.shake_level}
 
 根据以上参数，遵循参数映射规则，生成符合意境的爵士乐曲。`
 }
 
 /**
- * 调用 GPT-4 生成音乐
+ * 🧠 提取 JSON（关键：防止模型多说话）
  */
-export async function generateWithGPT(params: MixingParams): Promise<GeneratedTrack> {
+function extractJSON(text: string): string {
+  const match = text.match(/\{[\s\S]*\}/)
+  if (!match) throw new Error("未找到JSON")
+  return match[0]
+}
+
+/**
+ * 主函数（Anthropic接口）
+ */
+export async function generateWithMiniMax(
+  params: MixingParams
+): Promise<GeneratedTrack> {
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
+    const response = await client.messages.create({
+      model: "MiniMax-M2.5", // 推荐
+      max_tokens: 2000,
+      temperature: 0.4,
+
+      system: buildSystemPrompt(),
+
       messages: [
-        { role: 'system', content: buildSystemPrompt() },
-        { role: 'user', content: buildUserPrompt(params) }
-      ],
-      response_format: { type: 'json_object' },
-    }, { timeout: 20000 })
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: buildUserPrompt(params)
+            }
+          ]
+        }
+      ]
+    })
 
-    const content = response.choices[0].message.content
-    if (!content) {
-      throw new Error('GPT 返回空内容')
+    /**
+     * ⚠️ Anthropic格式解析
+     */
+    let text = ""
+
+    for (const block of response.content) {
+      if (block.type === "text") {
+        text += block.text
+      }
     }
 
-    const generated = JSON.parse(content) as GeneratedTrack
+    if (!text) throw new Error("空响应")
 
-    // 验证必填字段
-    if (!generated.track_name_en || !generated.track_name_zh ||
-        !generated.poem_en || !generated.poem_zh ||
-        !generated.chord_progression || !generated.melody) {
-      throw new Error('GPT 返回数据不完整')
+    console.log("🧠 MiniMax raw:", text)
+
+    /**
+     * 提取 JSON
+     */
+    const jsonStr = extractJSON(text)
+    const parsed = JSON.parse(jsonStr) as GeneratedTrack
+
+    /**
+     * 校验
+     */
+    if (
+      !parsed.id ||
+      !parsed.music ||
+      !parsed.music.track_name_en ||
+      !parsed.music.melody ||
+      parsed.music.melody.length < 16
+    ) {
+      throw new Error("结构不完整")
     }
 
-    return generated
-  } catch (error) {
-    console.error('GPT generation failed:', error)
-    throw error
+    return parsed
+  } catch (err) {
+    console.error("MiniMax error:", err)
+    throw err
   }
 }
 
@@ -207,38 +387,63 @@ export function getFallbackTrack(params: MixingParams): GeneratedTrack {
   const { key, mode } = moodKey[params.mood] || { key: 'C Major', mode: 'major' }
 
   return {
-    track_name_en: `${params.base_spirit.charAt(0).toUpperCase() + params.base_spirit.slice(1)} ${params.mood.charAt(0).toUpperCase() + params.mood.slice(1)}`,
-    track_name_zh: `${params.mood === 'sad' ? '忧伤' : params.mood === 'calm' ? '平静' : params.mood === 'mysterious' ? '神秘' : params.mood === 'romantic' ? '浪漫' : '活力'}之${params.base_spirit === 'whiskey' ? '威士忌' : params.base_spirit === 'gin' ? '金酒' : params.base_spirit === 'rum' ? '朗姆' : '龙舌兰'}`,
-    poem_en: [
-      'A glass of spirit, dark and deep',
-      'Where memories and melodies meet',
-      'The jazz notes dance, the ice cubes clink',
-      'In every sip, a moment to think'
-    ],
-    poem_zh: [
-      '杯中烈酒深且暗',
-      '记忆旋律相交汇',
-      '爵士音符舞翩翩',
-      '每一口都值得品'
-    ],
-    bpm: bpmMap[params.base_spirit] || 100,
-    key,
-    mode,
-    time_signature: '4/4',
-    style: styleMap[params.base_spirit] || 'jazz',
-    chord_progression: ['Cmaj7', 'Am7', 'Dm7', 'G7'],
-    melody: [
-      { note: 'C4', duration: '4n', time: 0 },
-      { note: 'E4', duration: '4n', time: 1 },
-      { note: 'G4', duration: '4n', time: 2 },
-      { note: 'C5', duration: '4n', time: 3 },
-      { note: 'B4', duration: '8n', time: 4 },
-      { note: 'A4', duration: '8n', time: 4.5 },
-      { note: 'G4', duration: '4n', time: 5 },
-      { note: 'E4', duration: '4n', time: 6 },
-      { note: 'D4', duration: '4n', time: 7 },
-      { note: 'C4', duration: '2n', time: 8 }
-    ],
-    instruments: ['piano', 'bass', 'drums']
+    id: `${params.base_spirit}_${params.ingredients.join("+")}_${params.mood}_${params.mood_intensity}_${params.ice_level}_${params.shake_level}`,
+
+    input_params: params,
+
+    tags: {
+      style: "swing",
+      mode: "major",
+      energy_level: "medium",
+      rhythm_complexity: "medium",
+      brightness: "bright",
+      texture: ["legato", "swing"]
+    },
+
+    music: {
+      track_name_en: "Nocturne in Silver Citrus",
+      track_name_zh: "柠夜微醺",
+
+      poem_en: [
+        "Soft echoes drift through twilight's gentle air",
+        "A silver glow dissolves in whispered light",
+        "The rhythm sways with scents both bright and rare",
+        "As shadows dance beneath the velvet night"
+      ],
+
+      poem_zh: [
+        "柠香浮夜色",
+        "微光落杯中",
+        "弦影随风转",
+        "心随酒意浓"
+      ],
+
+      bpm: 110,
+      key: "C Major",
+      mode: "major",
+      time_signature: "4/4",
+      style: "swing",
+
+      chord_progression: ["Cmaj7", "Am7", "Dm7", "G7"],
+
+      melody: [
+        { note: "E4", duration: "8n", time: 0 },
+        { note: "G4", duration: "8n", time: 0.5 },
+        { note: "A4", duration: "4n", time: 1 },
+        { note: "G4", duration: "8n", time: 2 },
+        { note: "E4", duration: "8n", time: 2.5 },
+        { note: "D4", duration: "4n", time: 3 },
+        { note: "C4", duration: "2n", time: 4 }
+      ],
+
+      instruments: ["piano", "bass", "drums"]
+    },
+
+    meta: {
+      version: "v1",
+      generated_at: new Date().toISOString(),
+      generator: "fallback",
+      valid: true
+    }
   }
 }
