@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { exchangeCodeForToken, getSecondMeUser } from '@/lib/secondme'
 import { cookies } from 'next/headers'
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const code = searchParams.get('code')
+export async function POST(request: NextRequest) {
+  const { code } = await request.json()
 
-  if (!code) {
-    return NextResponse.redirect(new URL('/?error=no_code', request.url))
+  if (!code || !code.startsWith('smc-')) {
+    return NextResponse.json({ error: '授权码格式不正确，应以 smc- 开头' }, { status: 400 })
   }
 
   try {
@@ -30,10 +29,9 @@ export async function GET(request: NextRequest) {
       path: '/',
     })
 
-    // 跳转到关闭弹窗的中转页
-    return NextResponse.redirect(new URL('/auth/done', request.url))
+    return NextResponse.json({ success: true, name: userData.name })
   } catch (error) {
-    console.error('OAuth callback error:', error)
-    return NextResponse.redirect(new URL('/?error=auth_failed', request.url))
+    console.error('Code exchange error:', error)
+    return NextResponse.json({ error: '授权码无效或已过期，请重新获取' }, { status: 401 })
   }
 }
