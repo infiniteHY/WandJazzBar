@@ -3,11 +3,12 @@
 import { useJazzBar } from '../context/JazzBarContext'
 
 const INGREDIENTS = [
-  { id: 'lemon', name: '柠檬', icon: '🍋', desc: 'HI', color: '#ffdd57' },
-  { id: 'smoke', name: '烟熏', icon: '🔥', desc: 'LO', color: '#ff6b4a' },
-  { id: 'honey', name: '蜂蜜', icon: '🍯', desc: 'SOFT', color: '#ffaa42' },
-  { id: 'coffee', name: '咖啡', icon: '☕', desc: 'CMPLX', color: '#c084fc' },
-  { id: 'mint', name: '薄荷', icon: '🌿', desc: 'DECO', color: '#34d399' }
+  { id: 'lemon', name: '柠檬',  icon: '🍋', desc: 'HI',    color: '#ffdd57' },
+  { id: 'smoke', name: '烟熏',  icon: '🔥', desc: 'LO',    color: '#ff6b4a' },
+  { id: 'honey', name: '蜂蜜',  icon: '🍯', desc: 'SOFT',  color: '#ffaa42' },
+  { id: 'coffee',name: '咖啡',  icon: '☕', desc: 'CMPLX', color: '#c084fc' },
+  { id: 'mint',  name: '薄荷',  icon: '🌿', desc: 'DECO',  color: '#34d399' },
+  { id: 'soda',  name: '苏打水',icon: '🫧', desc: 'AIR',   color: '#7dd3fc' },
 ]
 
 export default function Step2Ingredients() {
@@ -18,7 +19,7 @@ export default function Step2Ingredients() {
       <div className="flex justify-between items-center mb-3 flex-shrink-0">
         <h2 className="section-title">02 · INGREDIENTS</h2>
         <span style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '9px', color: state.mixingParams.ingredients.length > 0 ? 'var(--neon-orange)' : 'rgba(160,160,160,0.4)' }}>
-          {state.mixingParams.ingredients.length}/5
+          {state.mixingParams.ingredients.length}/6
         </span>
       </div>
 

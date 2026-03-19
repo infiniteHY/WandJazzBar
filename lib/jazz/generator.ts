@@ -71,7 +71,7 @@ function buildSystemPrompt(): string {
 "id": "base_spirit_ingredient_mood_intensity_ice_shake",
 "input_params": {
 "base_spirit": "whiskey | gin | rum | tequila",
-"ingredients": "lemon | mint | coffee | smoke | honey",
+"ingredients": "lemon | mint | coffee | smoke | honey | soda",
 "mood": "calm | sad | mysterious | romantic | energetic",
 "mood_intensity": "1-5整数",
 "ice_level": "none | light | heavy",
