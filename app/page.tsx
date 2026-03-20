@@ -6,34 +6,18 @@ import { useRouter, useSearchParams } from 'next/navigation'
 function LoginPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [status, setStatus] = useState<'checking' | 'idle' | 'exchanging' | 'error'>('checking')
+  const [status, setStatus] = useState<'checking' | 'idle' | 'error'>('checking')
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const code = searchParams.get('code')
-
-    // SecondMe 回调带来了授权码，自动兑换
-    if (code) {
-      setStatus('exchanging')
-      fetch('/api/auth/exchange', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.success) {
-            router.replace('/jazz-bar')
-          } else {
-            setError(data.error || '授权失败，请重试')
-            setStatus('error')
-          }
-        })
-        .catch(() => { setError('网络错误，请重试'); setStatus('error') })
+    const errParam = searchParams.get('error')
+    if (errParam) {
+      setError(decodeURIComponent(errParam))
+      setStatus('error')
       return
     }
 
-    // 无授权码：检查是否已登录
+    // 检查是否已登录
     fetch('/api/auth/check')
       .then(r => r.json())
       .then(d => {
@@ -43,13 +27,13 @@ function LoginPage() {
       .catch(() => setStatus('idle'))
   }, [router, searchParams])
 
-  if (status === 'checking' || status === 'exchanging') {
+  if (status === 'checking') {
     return (
       <div style={{ minHeight: '100vh', background: '#0d0d0d', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🎷</div>
           <p style={{ fontFamily: "'Press Start 2P', cursive", fontSize: 9, color: 'rgba(255,140,66,0.6)', letterSpacing: 2 }}>
-            {status === 'exchanging' ? 'AUTHORIZING...' : 'LOADING...'}
+            LOADING...
           </p>
         </div>
       </div>

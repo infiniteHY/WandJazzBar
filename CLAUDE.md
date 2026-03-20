@@ -8,7 +8,7 @@
 
 - **Client ID**: `7afb384b-6eac-4525-89e1-0ae7af22ea0d`
 - **权限范围**: profile, chat, note
-- **回调地址**: http://localhost:3000/api/auth/callback
+- **回调地址**: https://wandjazzbar.vercel.app/api/auth/callback/secondme
 - **数据库**: PostgreSQL
 
 ## 功能模块
@@ -32,9 +32,10 @@
 
 ## API 端点
 
-- **授权**: https://api.second.me/oauth/authorize
-- **Token**: https://api.second.me/oauth/token
-- **API Base**: https://api.second.me/v1
+- **OAuth 授权页**: https://go.second.me/oauth/
+- **Token 交换**: https://api.mindverse.com/gate/lab/api/oauth/token/code
+- **Token 刷新**: https://api.mindverse.com/gate/lab/api/oauth/token/refresh
+- **API Base**: https://api.mindverse.com/gate/lab
 
 ## 开发文档
 

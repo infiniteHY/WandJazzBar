@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { exchangeCodeForToken, getSecondMeUser } from '@/lib/secondme'
 import { cookies } from 'next/headers'
 
-export async function POST(request: NextRequest) {
-  const { code } = await request.json()
+export async function GET(request: NextRequest) {
+  const code = request.nextUrl.searchParams.get('code')
 
   if (!code) {
-    return NextResponse.json({ error: '授权码不能为空' }, { status: 400 })
+    return NextResponse.redirect(new URL('/?error=no_code', request.url))
   }
 
   try {
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30,
+        maxAge: 60 * 60 * 24 * 30, // 30 days
         path: '/',
       })
     }
@@ -46,9 +46,11 @@ export async function POST(request: NextRequest) {
       path: '/',
     })
 
-    return NextResponse.json({ success: true, name: userName })
+    // 授权成功，直接跳转到 jazz-bar
+    return NextResponse.redirect(new URL('/jazz-bar', request.url))
   } catch (error) {
-    console.error('Code exchange error:', error)
-    return NextResponse.json({ error: '授权码无效或已过期，请重新获取' }, { status: 401 })
+    const msg = error instanceof Error ? error.message : 'auth_failed'
+    console.error('OAuth callback error:', msg)
+    return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(msg)}`, request.url))
   }
 }
