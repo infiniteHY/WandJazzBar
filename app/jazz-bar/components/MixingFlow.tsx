@@ -62,7 +62,7 @@ export default function MixingFlow() {
   }
 
   return (
-    <div className="h-screen flex flex-col py-2 px-4 overflow-hidden">
+    <div className="flex flex-col py-2 px-4 overflow-hidden" style={{ height: '100dvh' }}>
       <div
         className="max-w-6xl mx-auto w-full flex-1 min-h-0 gap-2"
         style={{
@@ -156,7 +156,7 @@ function StartScreen() {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center relative overflow-hidden">
+    <div className="flex items-center justify-center relative overflow-hidden" style={{ height: '100dvh' }}>
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute rounded-full opacity-20 animate-pulse" style={{ width: 300, height: 300, left: '10%', bottom: '15%', background: 'radial-gradient(circle, rgba(255,140,66,0.3) 0%, transparent 70%)', filter: 'blur(60px)' }} />
         <div className="absolute rounded-full opacity-15 animate-pulse" style={{ width: 250, height: 250, right: '15%', top: '20%', background: 'radial-gradient(circle, rgba(192,132,252,0.25) 0%, transparent 70%)', filter: 'blur(50px)', animationDelay: '1s' }} />

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { exchangeCodeForToken, getSecondMeUser } from '@/lib/secondme'
-import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   const { code } = await request.json()
@@ -20,7 +19,9 @@ export async function POST(request: NextRequest) {
       // 用户信息获取失败不阻塞登录
     }
 
-    cookies().set('sm_token', tokenData.accessToken, {
+    const response = NextResponse.json({ success: true, name: userName })
+
+    response.cookies.set('sm_token', tokenData.accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (tokenData.refreshToken) {
-      cookies().set('sm_refresh_token', tokenData.refreshToken, {
+      response.cookies.set('sm_refresh_token', tokenData.refreshToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    cookies().set('sm_user_name', userName, {
+    response.cookies.set('sm_user_name', userName, {
       httpOnly: false,
       secure: true,
       sameSite: 'lax',
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
       path: '/',
     })
 
-    return NextResponse.json({ success: true, name: userName })
+    return response
   } catch (error) {
     console.error('Code exchange error:', error)
     return NextResponse.json({ error: '授权码无效或已过期，请重新获取' }, { status: 401 })
