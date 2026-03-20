@@ -56,7 +56,7 @@ function LoginPage() {
             WAND JAZZ BAR
           </h1>
           <p style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 17, color: 'rgba(160,160,160,0.5)' }}>
-            像素爵士酒吧 · 调一杯专属音乐
+            魔杖爵士乐酒吧 · 调一杯专属音乐
           </p>
         </div>
 
