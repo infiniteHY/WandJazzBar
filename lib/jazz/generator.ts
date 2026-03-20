@@ -334,7 +334,7 @@ export async function generateWithMiniMax(
   try {
     const response = await client.messages.create({
       model: "MiniMax-M2.5", // 推荐
-      max_tokens: 4096,
+      max_tokens: 8192,
       temperature: 0.4,
 
       system: buildSystemPrompt(),
@@ -377,16 +377,24 @@ export async function generateWithMiniMax(
     try {
       parsed = JSON.parse(jsonStr) as GeneratedTrack
     } catch (parseErr) {
-      // 尝试修复常见的截断问题：去掉末尾不完整的数组元素后重新补全
       console.warn("JSON parse failed, attempting repair:", (parseErr as Error).message)
       let repaired = jsonStr
-        .replace(/,\s*[{\[]\s*"[^"]*"\s*:\s*"?[^}\]]*$/, '')  // 移除末尾不完整对象
-        .replace(/,\s*$/, '')  // 移除末尾多余逗号
-      // 补全缺失的括号
+
+      // 1. 补全漏写的逗号：相邻字符串之间（"...\n"..."）
+      repaired = repaired.replace(/"(\s*\n\s*)"/g, '",\n"')
+      // 2. 补全漏写的逗号：相邻对象之间（}\n{）
+      repaired = repaired.replace(/\}(\s*\n\s*)\{/g, '},\n{')
+      // 3. 移除末尾多余逗号（,] 或 ,}）
+      repaired = repaired.replace(/,(\s*[\]\}])/g, '$1')
+      // 4. 移除末尾不完整的对象元素
+      repaired = repaired.replace(/,\s*\{\s*"[^"]*"\s*:\s*"?[^}\]]*$/, '')
+
+      // 5. 补全缺失的括号
       const opens = (repaired.match(/\[/g) || []).length - (repaired.match(/\]/g) || []).length
       const braces = (repaired.match(/\{/g) || []).length - (repaired.match(/\}/g) || []).length
       for (let i = 0; i < opens; i++) repaired += ']'
       for (let i = 0; i < braces; i++) repaired += '}'
+
       parsed = JSON.parse(repaired) as GeneratedTrack
     }
 
