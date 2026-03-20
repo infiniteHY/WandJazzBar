@@ -62,45 +62,51 @@ export default function MixingFlow() {
   }
 
   return (
-    <div className="h-screen flex flex-col py-3 px-4 overflow-hidden">
-      <div className="max-w-6xl mx-auto w-full flex flex-col flex-1 gap-2.5 min-h-0">
+    <div className="h-screen flex flex-col py-2 px-4 overflow-hidden">
+      <div
+        className="max-w-6xl mx-auto w-full flex-1 min-h-0 gap-2"
+        style={{
+          display: 'grid',
+          gridTemplateRows: 'auto 3fr auto 1fr 1fr auto',
+        }}
+      >
 
         {/* Title */}
-        <div className="text-center flex-shrink-0 fade-in-up">
-          <h1 className="neon-sign-text text-2xl md:text-3xl leading-tight">WAND JAZZ BAR</h1>
-          <div className="neon-divider max-w-xs mx-auto my-1.5" />
+        <div className="text-center fade-in-up">
+          <h1 className="neon-sign-text text-xl md:text-2xl leading-tight">WAND JAZZ BAR</h1>
+          <div className="neon-divider max-w-xs mx-auto my-1" />
           <p className="text-xs tracking-widest" style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', color: 'rgba(160,160,160,0.5)' }}>
             Select your cocktail parameters
           </p>
         </div>
 
-        {/* Row 1: Step1 + Step2 side by side */}
-        <div className="grid grid-cols-2 gap-2.5 flex-1 min-h-0">
-          <div className="jazz-section fade-in-up stagger-1 flex flex-col h-full">
+        {/* Row 1: Step1 + Step2 side by side — 受控高度 */}
+        <div className="grid grid-cols-2 gap-2 min-h-0">
+          <div className="jazz-section fade-in-up stagger-1 flex flex-col overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
-          <div className="jazz-section fade-in-up stagger-2 flex flex-col h-full">
+          <div className="jazz-section fade-in-up stagger-2 flex flex-col overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step2Ingredients />
           </div>
         </div>
 
         {/* Row 2: Step3 full width */}
-        <div className="jazz-section fade-in-up stagger-3 flex-shrink-0">
+        <div className="jazz-section fade-in-up stagger-3" style={{ padding: '10px 14px' }}>
           <Step3Mood />
         </div>
 
-        {/* Row 3: Step4 full width — inline */}
-        <div className="jazz-section fade-in-up stagger-4 flex-shrink-0">
-          <Step4IceLevel inline />
+        {/* Row 3: Step4 full width — 卡片风格同03 */}
+        <div className="jazz-section fade-in-up stagger-4 flex flex-col" style={{ padding: '10px 14px' }}>
+          <Step4IceLevel expanded />
         </div>
 
-        {/* Row 4: Step5 full width — inline */}
-        <div className="jazz-section fade-in-up stagger-5 flex-shrink-0">
-          <Step5Shake inline />
+        {/* Row 4: Step5 full width — 卡片风格同03 */}
+        <div className="jazz-section fade-in-up stagger-5 flex flex-col" style={{ padding: '10px 14px' }}>
+          <Step5Shake expanded />
         </div>
 
         {/* SHAKE button */}
-        <div className="text-center flex-shrink-0 pb-1 fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <div className="text-center pb-1 fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="relative inline-block">
             <button
               ref={buttonRef}
@@ -125,7 +131,7 @@ export default function MixingFlow() {
             ))}
           </div>
           {!isComplete && (
-            <div className="mt-1.5 flex justify-center gap-3">
+            <div className="mt-1 flex justify-center gap-3">
               {!state.mixingParams.base_spirit && <span className="missing-hint">base spirit</span>}
               {state.mixingParams.ingredients.length === 0 && <span className="missing-hint">ingredients</span>}
               {!state.mixingParams.mood && <span className="missing-hint">mood</span>}
