@@ -411,7 +411,7 @@ input[type="range"]::-moz-range-thumb {
 /* ── Section Title ── */
 .section-title {
   font-family: 'Press Start 2P', cursive;
-  font-size: 12px;
+  font-size: 10px;
   color: var(--neon-orange);
   text-shadow: 0 0 6px rgba(255, 140, 66, 0.3);
   letter-spacing: 0.08em;
