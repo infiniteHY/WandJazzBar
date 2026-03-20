@@ -32,10 +32,10 @@
 
 ## API 端点
 
-- **OAuth 授权页**: https://go.second.me/oauth/
-- **Token 交换**: https://api.mindverse.com/gate/lab/api/oauth/token/code
-- **Token 刷新**: https://api.mindverse.com/gate/lab/api/oauth/token/refresh
-- **API Base**: https://api.mindverse.com/gate/lab
+- **授权页**: https://second-me.cn/third-party-agent/auth
+- **Token 交换**: https://app.mindos.com/gate/in/rest/third-party-agent/v1/auth/token/code
+- **用户信息**: https://app.mindos.com/gate/in/rest/third-party-agent/v1/profile
+- **API Base**: https://app.mindos.com/gate/in/rest/third-party-agent/v1
 
 ## 开发文档
 

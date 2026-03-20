@@ -24,19 +24,9 @@ export async function GET(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: tokenData.expiresIn || 7200,
+      maxAge: 60 * 60 * 24 * 30,
       path: '/',
     })
-
-    if (tokenData.refreshToken) {
-      cookies().set('sm_refresh_token', tokenData.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-        path: '/',
-      })
-    }
 
     cookies().set('sm_user_name', userName, {
       httpOnly: false,
