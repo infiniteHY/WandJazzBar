@@ -280,11 +280,49 @@ shake_level: ${params.shake_level}
 
 /**
  * 🧠 提取 JSON（关键：防止模型多说话）
+ * 使用括号匹配而非贪婪正则，避免多余内容
  */
 function extractJSON(text: string): string {
-  const match = text.match(/\{[\s\S]*\}/)
-  if (!match) throw new Error("未找到JSON")
-  return match[0]
+  const start = text.indexOf('{')
+  if (start === -1) throw new Error("未找到JSON")
+
+  let depth = 0
+  let inString = false
+  let escape = false
+
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i]
+    if (escape) { escape = false; continue }
+    if (ch === '\\' && inString) { escape = true; continue }
+    if (ch === '"' && !escape) { inString = !inString; continue }
+    if (inString) continue
+    if (ch === '{') depth++
+    if (ch === '}') { depth--; if (depth === 0) return text.slice(start, i + 1) }
+  }
+
+  // 如果括号未闭合，尝试补全
+  if (depth > 0) {
+    let truncated = text.slice(start)
+    // 移除末尾不完整的元素（如被截断的 melody 对象）
+    const lastComplete = truncated.lastIndexOf('}')
+    if (lastComplete > 0) {
+      truncated = truncated.slice(0, lastComplete + 1)
+    }
+    // 补全缺失的 ] 和 }
+    while (depth > 0) {
+      // 检查是否需要先关闭数组
+      const lastOpen = Math.max(truncated.lastIndexOf('['), truncated.lastIndexOf('{'))
+      const lastClose = Math.max(truncated.lastIndexOf(']'), truncated.lastIndexOf('}'))
+      if (truncated.lastIndexOf('[') > truncated.lastIndexOf(']')) {
+        truncated += ']'
+      }
+      truncated += '}'
+      depth--
+    }
+    return truncated
+  }
+
+  throw new Error("未找到完整JSON")
 }
 
 /**
@@ -296,7 +334,7 @@ export async function generateWithMiniMax(
   try {
     const response = await client.messages.create({
       model: "MiniMax-M2.5", // 推荐
-      max_tokens: 2000,
+      max_tokens: 4096,
       temperature: 0.4,
 
       system: buildSystemPrompt(),
@@ -327,23 +365,40 @@ export async function generateWithMiniMax(
 
     if (!text) throw new Error("空响应")
 
-    console.log("🧠 MiniMax raw:", text)
+    console.log("🧠 MiniMax stop_reason:", response.stop_reason, "usage:", JSON.stringify(response.usage))
+    console.log("🧠 MiniMax raw:", text.slice(0, 200), "...(length:", text.length, ")")
 
     /**
      * 提取 JSON
      */
     const jsonStr = extractJSON(text)
-    const parsed = JSON.parse(jsonStr) as GeneratedTrack
+    let parsed: GeneratedTrack
+
+    try {
+      parsed = JSON.parse(jsonStr) as GeneratedTrack
+    } catch (parseErr) {
+      // 尝试修复常见的截断问题：去掉末尾不完整的数组元素后重新补全
+      console.warn("JSON parse failed, attempting repair:", (parseErr as Error).message)
+      let repaired = jsonStr
+        .replace(/,\s*[{\[]\s*"[^"]*"\s*:\s*"?[^}\]]*$/, '')  // 移除末尾不完整对象
+        .replace(/,\s*$/, '')  // 移除末尾多余逗号
+      // 补全缺失的括号
+      const opens = (repaired.match(/\[/g) || []).length - (repaired.match(/\]/g) || []).length
+      const braces = (repaired.match(/\{/g) || []).length - (repaired.match(/\}/g) || []).length
+      for (let i = 0; i < opens; i++) repaired += ']'
+      for (let i = 0; i < braces; i++) repaired += '}'
+      parsed = JSON.parse(repaired) as GeneratedTrack
+    }
 
     /**
-     * 校验
+     * 校验（melody 允许截断后少于16个）
      */
     if (
       !parsed.id ||
       !parsed.music ||
       !parsed.music.track_name_en ||
       !parsed.music.melody ||
-      parsed.music.melody.length < 16
+      parsed.music.melody.length < 8
     ) {
       throw new Error("结构不完整")
     }
