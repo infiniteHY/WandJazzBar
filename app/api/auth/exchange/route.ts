@@ -5,31 +5,48 @@ import { cookies } from 'next/headers'
 export async function POST(request: NextRequest) {
   const { code } = await request.json()
 
-  if (!code || !code.startsWith('smc-')) {
-    return NextResponse.json({ error: '授权码格式不正确，应以 smc- 开头' }, { status: 400 })
+  if (!code) {
+    return NextResponse.json({ error: '授权码不能为空' }, { status: 400 })
   }
 
   try {
     const tokenData = await exchangeCodeForToken(code)
-    const userData = await getSecondMeUser(tokenData.accessToken)
+
+    let userName = ''
+    try {
+      const userData = await getSecondMeUser(tokenData.accessToken)
+      userName = userData.name || ''
+    } catch {
+      // 用户信息获取失败不阻塞登录
+    }
 
     cookies().set('sm_token', tokenData.accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: tokenData.expiresIn || 7200,
       path: '/',
     })
 
-    cookies().set('sm_user_name', userData.name || '', {
+    if (tokenData.refreshToken) {
+      cookies().set('sm_refresh_token', tokenData.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 30,
+        path: '/',
+      })
+    }
+
+    cookies().set('sm_user_name', userName, {
       httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 30,
       path: '/',
     })
 
-    return NextResponse.json({ success: true, name: userData.name })
+    return NextResponse.json({ success: true, name: userName })
   } catch (error) {
     console.error('Code exchange error:', error)
     return NextResponse.json({ error: '授权码无效或已过期，请重新获取' }, { status: 401 })

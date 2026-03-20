@@ -32,17 +32,18 @@
 
 ## API 端点
 
-- **授权页**: https://second-me.cn/third-party-agent/auth
-- **Token 交换**: https://app.mindos.com/gate/in/rest/third-party-agent/v1/auth/token/code
-- **用户信息**: https://app.mindos.com/gate/in/rest/third-party-agent/v1/profile
-- **API Base**: https://app.mindos.com/gate/in/rest/third-party-agent/v1
+- **OAuth 授权页**: https://go.second.me/oauth/
+- **Token 交换**: POST https://api.mindverse.com/gate/lab/api/oauth/token/code (form-urlencoded)
+- **Token 刷新**: POST https://api.mindverse.com/gate/lab/api/oauth/token/refresh
+- **用户信息**: GET https://api.mindverse.com/gate/lab/api/secondme/user/info
+- **API Base**: https://api.mindverse.com/gate/lab
 
 ## 开发文档
 
-- [OAuth 认证指南](https://docs.second.me/zh/guides/oauth)
-- [用户 API](https://docs.second.me/zh/api/users)
-- [聊天 API](https://docs.second.me/zh/api/chat)
-- [笔记 API](https://docs.second.me/zh/api/notes)
+- [官方开发文档](https://develop-docs.second.me/)
+- [OAuth2 指南](https://develop-docs.second.me/zh/docs/authentication/oauth2)
+- [OAuth2 API 参考](https://develop-docs.second.me/zh/docs/api-reference/oauth)
+- [SecondMe API 参考](https://develop-docs.second.me/zh/docs/api-reference/secondme)
 
 ## 数据模型
 
