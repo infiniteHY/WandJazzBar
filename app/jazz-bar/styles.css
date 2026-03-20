@@ -559,3 +559,47 @@ input[type="range"]::-moz-range-thumb {
   color: rgba(160, 160, 160, 0.5);
   letter-spacing: 0.05em;
 }
+
+/* ── Responsive Mixing Container ── */
+.jazz-mixing-container {
+  min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+  .jazz-mixing-container {
+    height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+/* ── Mixing Grid (responsive) ── */
+.mixing-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .mixing-grid {
+    display: grid;
+    grid-template-rows: auto 3fr auto 1fr 1fr auto;
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+/* ── Button responsive sizing ── */
+@media (max-width: 480px) {
+  .shake-button {
+    font-size: 11px;
+    padding: 14px 32px;
+  }
+  .enter-button {
+    font-size: 10px;
+    padding: 14px 28px;
+  }
+}

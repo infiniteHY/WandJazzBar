@@ -62,30 +62,24 @@ export default function MixingFlow() {
   }
 
   return (
-    <div className="flex flex-col py-2 px-4 overflow-hidden" style={{ height: '100dvh' }}>
-      <div
-        className="max-w-6xl mx-auto w-full flex-1 min-h-0 gap-2"
-        style={{
-          display: 'grid',
-          gridTemplateRows: 'auto 3fr auto 1fr 1fr auto',
-        }}
-      >
+    <div className="jazz-mixing-container flex flex-col py-2 px-3 md:px-4">
+      <div className="mixing-grid">
 
         {/* Title */}
         <div className="text-center fade-in-up">
-          <h1 className="neon-sign-text text-xl md:text-2xl leading-tight">WAND JAZZ BAR</h1>
+          <h1 className="neon-sign-text text-lg md:text-2xl leading-tight">WAND JAZZ BAR</h1>
           <div className="neon-divider max-w-xs mx-auto my-1" />
           <p className="text-xs tracking-widest" style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', color: 'rgba(160,160,160,0.5)' }}>
             Select your cocktail parameters
           </p>
         </div>
 
-        {/* Row 1: Step1 + Step2 side by side — 受控高度 */}
-        <div className="grid grid-cols-2 gap-2 min-h-0">
-          <div className="jazz-section fade-in-up stagger-1 flex flex-col overflow-hidden" style={{ padding: '10px 14px' }}>
+        {/* Row 1: Step1 + Step2 — stacked on mobile, side-by-side on md+ */}
+        <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:min-h-0">
+          <div className="jazz-section fade-in-up stagger-1 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
-          <div className="jazz-section fade-in-up stagger-2 flex flex-col overflow-hidden" style={{ padding: '10px 14px' }}>
+          <div className="jazz-section fade-in-up stagger-2 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step2Ingredients />
           </div>
         </div>
@@ -156,20 +150,20 @@ function StartScreen() {
   }
 
   return (
-    <div className="flex items-center justify-center relative overflow-hidden" style={{ height: '100dvh' }}>
+    <div className="flex items-center justify-center relative overflow-hidden" style={{ minHeight: '100dvh' }}>
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute rounded-full opacity-20 animate-pulse" style={{ width: 300, height: 300, left: '10%', bottom: '15%', background: 'radial-gradient(circle, rgba(255,140,66,0.3) 0%, transparent 70%)', filter: 'blur(60px)' }} />
         <div className="absolute rounded-full opacity-15 animate-pulse" style={{ width: 250, height: 250, right: '15%', top: '20%', background: 'radial-gradient(circle, rgba(192,132,252,0.25) 0%, transparent 70%)', filter: 'blur(50px)', animationDelay: '1s' }} />
       </div>
-      <div className={`text-center relative z-10 transition-all duration-500 max-w-2xl px-6 ${entered ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-        <div className="neon-sign mb-6 fade-in-up">
-          <h1 className="neon-sign-text text-4xl md:text-6xl leading-relaxed">WAND JAZZ BAR</h1>
+      <div className={`text-center relative z-10 transition-all duration-500 w-full max-w-2xl px-6 py-12 ${entered ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+        <div className="neon-sign mb-5 fade-in-up">
+          <h1 className="neon-sign-text text-3xl sm:text-4xl md:text-6xl leading-relaxed">WAND JAZZ BAR</h1>
         </div>
-        <p className="subtitle-glow text-sm md:text-base mb-8 fade-in-up" style={{ animationDelay: '0.2s', fontFamily: "'Press Start 2P', cursive" }}>
+        <p className="subtitle-glow text-xs sm:text-sm md:text-base mb-6 fade-in-up" style={{ animationDelay: '0.2s', fontFamily: "'Press Start 2P', cursive" }}>
           COCKTAIL x JAZZ
         </p>
-        <div className="mb-8 fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <p className="leading-loose text-base md:text-lg" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(245,245,245,0.45)', fontWeight: 300 }}>
+        <div className="mb-6 fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <p className="leading-loose text-sm sm:text-base md:text-lg" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(245,245,245,0.45)', fontWeight: 300 }}>
             乐曲催着万事万物入眠，梦境无限蔓延；<br />
             世界的歌声开始起舞翩翩，你将会感受音乐的法力无边。
           </p>
@@ -177,7 +171,7 @@ function StartScreen() {
             — Eichendorff
           </p>
         </div>
-        <div className="neon-divider max-w-[200px] mx-auto mb-8 fade-in-up" style={{ animationDelay: '0.4s' }} />
+        <div className="neon-divider max-w-[200px] mx-auto mb-6 fade-in-up" style={{ animationDelay: '0.4s' }} />
         <div className="fade-in-up" style={{ animationDelay: '0.5s' }}>
           <button onClick={handleEnter} className="enter-button">ENTER BAR</button>
         </div>

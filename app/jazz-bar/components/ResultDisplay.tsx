@@ -75,14 +75,14 @@ export default function ResultDisplay() {
       <div className="w-full max-w-2xl fade-in-up">
 
         {/* ── Card ── */}
-        <div className="jazz-section" style={{ borderRadius: 16, padding: '1.75rem' }}>
+        <div className="jazz-section" style={{ borderRadius: 16, padding: '1.25rem' }}>
 
           {/* ── Header ── */}
-          <div className="flex items-start justify-between gap-4 mb-6">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
+            <div className="min-w-0">
               <h1 style={{
                 fontFamily: "'Noto Serif SC', serif",
-                fontSize: 26, fontWeight: 500,
+                fontSize: 'clamp(18px, 5vw, 26px)', fontWeight: 500,
                 color: '#f5f5f5', letterSpacing: '0.04em', lineHeight: 1.2,
               }}>
                 {track.track_name_zh}
@@ -95,7 +95,7 @@ export default function ResultDisplay() {
                 {track.track_name_en} · {track.key} · {track.style} · ♩= {track.bpm}
               </p>
             </div>
-            <div className="flex gap-1.5 flex-wrap justify-end pt-1">
+            <div className="flex gap-1.5 flex-wrap flex-shrink-0">
               <span className="chord-bubble" style={{ background: 'rgba(56,189,248,0.12)', borderColor: 'rgba(56,189,248,0.3)', color: '#38bdf8', fontSize: 11, padding: '3px 10px', borderRadius: 6 }}>
                 {track.time_signature}
               </span>
@@ -109,7 +109,7 @@ export default function ResultDisplay() {
           </div>
 
           {/* ── Poems ── */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
             {/* 中文 */}
             <div style={{ background: '#0d0d0d', border: '0.5px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px', borderLeft: '2px solid rgba(255,140,66,0.4)' }}>
               <div style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '9px', color: 'rgba(255,140,66,0.5)', marginBottom: 10, letterSpacing: '0.05em' }}>诗 · 中文</div>
