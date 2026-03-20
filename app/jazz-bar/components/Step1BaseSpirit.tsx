@@ -26,12 +26,14 @@ export default function Step1BaseSpirit() {
               key={spirit.id}
               onClick={() => dispatch({ type: 'SET_BASE_SPIRIT', spirit: spirit.id })}
               className={`option-card text-center ${isSelected ? 'selected' : ''}`}
+              style={{ padding: '8px 4px' }}
             >
-              <div className="text-3xl md:text-4xl mb-1 relative z-10">{spirit.icon}</div>
+              <div className="text-xl mb-0.5 relative z-10">{spirit.icon}</div>
               <div
-                className="text-base mb-0.5 relative z-10"
+                className="relative z-10 mb-0.5"
                 style={{
                   fontFamily: "'Noto Serif SC', serif",
+                  fontSize: '12px',
                   fontWeight: 500,
                   color: isSelected ? spirit.color : 'rgba(245, 245, 245, 0.85)',
                 }}

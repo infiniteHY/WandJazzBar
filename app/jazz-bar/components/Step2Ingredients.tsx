@@ -32,9 +32,10 @@ export default function Step2Ingredients() {
               key={ingredient.id}
               onClick={() => dispatch({ type: 'TOGGLE_INGREDIENT', ingredient: ingredient.id })}
               className={`option-card text-center ${isSelected ? 'selected' : ''}`}
+              style={{ padding: '8px 4px' }}
             >
-              <div className="text-2xl mb-1 relative z-10">{ingredient.icon}</div>
-              <div className="text-sm mb-0.5 relative z-10" style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 500, color: isSelected ? ingredient.color : 'rgba(245,245,245,0.8)' }}>
+              <div className="text-xl mb-0.5 relative z-10">{ingredient.icon}</div>
+              <div className="relative z-10 mb-0.5" style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '12px', fontWeight: 500, color: isSelected ? ingredient.color : 'rgba(245,245,245,0.8)' }}>
                 {ingredient.name}
               </div>
               <div className="relative z-10" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px', color: isSelected ? ingredient.color : 'rgba(160,160,160,0.35)', textShadow: isSelected ? `0 0 5px ${ingredient.color}30` : 'none' }}>
