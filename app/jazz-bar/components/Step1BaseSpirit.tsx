@@ -42,7 +42,7 @@ export default function Step1BaseSpirit() {
                 className="relative z-10"
                 style={{
                   fontFamily: "'Press Start 2P', cursive",
-                  fontSize: '9px',
+                  fontSize: '7px',
                   color: isSelected ? spirit.color : 'rgba(160, 160, 160, 0.4)',
                   textShadow: isSelected ? `0 0 6px ${spirit.color}40` : 'none',
                 }}
