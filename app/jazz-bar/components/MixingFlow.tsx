@@ -74,7 +74,7 @@ export default function MixingFlow() {
           </p>
         </div>
 
-        {/* Row 1: Step1 + Step2 — 等高对齐 */}
+        {/* Row 1: Step1 + Step2 side by side */}
         <div className="grid grid-cols-2 gap-2.5 flex-1 min-h-0">
           <div className="jazz-section fade-in-up stagger-1 flex flex-col h-full">
             <Step1BaseSpirit />
@@ -84,17 +84,19 @@ export default function MixingFlow() {
           </div>
         </div>
 
-        {/* Row 2: Step3(宽) + Step4 + Step5 */}
-        <div className="grid gap-2.5 flex-shrink-0" style={{ gridTemplateColumns: '3fr 1fr 1fr' }}>
-          <div className="jazz-section fade-in-up stagger-3">
-            <Step3Mood />
-          </div>
-          <div className="jazz-section fade-in-up stagger-4">
-            <Step4IceLevel compact />
-          </div>
-          <div className="jazz-section fade-in-up stagger-5">
-            <Step5Shake compact />
-          </div>
+        {/* Row 2: Step3 full width */}
+        <div className="jazz-section fade-in-up stagger-3 flex-shrink-0">
+          <Step3Mood />
+        </div>
+
+        {/* Row 3: Step4 full width — inline */}
+        <div className="jazz-section fade-in-up stagger-4 flex-shrink-0">
+          <Step4IceLevel inline />
+        </div>
+
+        {/* Row 4: Step5 full width — inline */}
+        <div className="jazz-section fade-in-up stagger-5 flex-shrink-0">
+          <Step5Shake inline />
         </div>
 
         {/* SHAKE button */}

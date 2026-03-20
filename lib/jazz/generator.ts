@@ -1,11 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk"
 import { MixingParams } from './utils'
 
-/**
- * ⚠️ 填你的 key
- */
 const client = new Anthropic({
-  apiKey: "sk-api-KtLO9hIGqO_Hq4CV-C1_t7E7hAyjbO9t8u96fE-8JDEdnqJCdUCp30F3U4L3P5IfmocCt4EK8T1C2LmXc53oMZOdSGEqSfIW7UW2LDlzrPIyAeKPO1sazeM", // ← 填
+  apiKey: process.env.MINIMAX_API_KEY || '',
   baseURL: "https://api.minimax.io/anthropic"
 })
 
