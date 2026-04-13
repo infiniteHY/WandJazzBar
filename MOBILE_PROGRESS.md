@@ -32,11 +32,14 @@ Changes in the PC zone have **zero effect** on mobile (≤767px), and vice versa
 
 ### 2. `app/jazz-bar/styles.css` — PC Bug Fix
 
-**Bug**: When the browser window is resized smaller (e.g., zoom in, short window height), the mixing page cards overlapped or disappeared.
-**Root cause**: `.jazz-mixing-container` had `height: 100dvh; overflow: hidden` on desktop. Combined with `grid-template-rows: auto 3fr auto 1fr 1fr auto`, shrinking the viewport forced grid rows below their content minimum — the overflow was clipped, making sections appear to vanish or overlap.
-**Fix**:
-- Changed `overflow: hidden` → `overflow-y: auto` on `.jazz-mixing-container` at ≥768px.
-- Changed `grid-template-rows` to use `minmax()`: `auto minmax(120px, 3fr) auto minmax(60px, 1fr) minmax(60px, 1fr) auto` so rows never collapse below a safe minimum.
+**Bug**: When the browser window is resized to a shorter height, the mixing page cards overlap (content bleeds out of one grid cell into the adjacent one).
+**Root cause**: CSS Grid `fr` rows with `height: 100dvh` can shrink any grid item below its intrinsic content height. Without per-cell clipping, overflowing content paints visually over sibling cells.
+**Fix** (3 rules added under `@media (min-width: 768px)`):
+1. `.mixing-grid > * { min-height: 0 }` — allows fr rows to freely shrink without CSS Grid's default `min-height: auto` resistance.
+2. `.mixing-grid > .jazz-section { overflow: clip; overflow-clip-margin: border-box 2px }` — clips overflowing content within each section. Uses `overflow: clip` (not `hidden`) so no scroll context is created. The 2px `border-box` margin ensures the `::before` gradient-border pseudo-element (`inset: -1px`) is NOT clipped at normal viewport sizes.
+3. `.mixing-grid > :not(.jazz-section) { overflow: hidden }` — clips the row2 flex wrapper and shake-button row.
+
+**Intentionally NOT changed**: `overflow: hidden` on `.jazz-mixing-container` is preserved. The single-page non-scrollable desktop experience is maintained.
 
 ---
 

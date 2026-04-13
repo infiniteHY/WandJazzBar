@@ -573,9 +573,7 @@ input[type="range"]::-moz-range-thumb {
 @media (min-width: 768px) {
   .jazz-mixing-container {
     height: 100dvh;
-    /* Use overflow-y: auto instead of hidden to prevent card overlap
-       when the window is resized smaller than the content height */
-    overflow-y: auto;
+    overflow: hidden;
   }
 }
 
@@ -593,10 +591,27 @@ input[type="range"]::-moz-range-thumb {
 @media (min-width: 768px) {
   .mixing-grid {
     display: grid;
-    /* Use minmax() so rows never collapse below minimum content height */
-    grid-template-rows: auto minmax(120px, 3fr) auto minmax(60px, 1fr) minmax(60px, 1fr) auto;
+    grid-template-rows: auto 3fr auto 1fr 1fr auto;
     flex: 1;
     min-height: 0;
+  }
+
+  /* Each direct grid child gets min-height:0 so fr rows can shrink freely
+     without cell content bleeding into adjacent rows (the overlap bug). */
+  .mixing-grid > * {
+    min-height: 0;
+  }
+
+  /* Jazz-section grid cells: use overflow:clip with a 2px outset so the
+     1px ::before gradient-border pseudo-element (inset:-1px) is not clipped. */
+  .mixing-grid > .jazz-section {
+    overflow: clip;
+    overflow-clip-margin: border-box 2px;
+  }
+
+  /* Non-section wrappers (row2 flex wrapper, button row): plain clip. */
+  .mixing-grid > :not(.jazz-section) {
+    overflow: hidden;
   }
 }
 
