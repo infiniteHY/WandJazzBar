@@ -36,3 +36,10 @@ body {
   background: rgba(255, 140, 66, 0.4);
   color: #fff;
 }
+
+/* ── Login card: reduced padding on mobile ── */
+@media (max-width: 767px) {
+  .login-card {
+    padding: 28px 20px !important;
+  }
+}

@@ -60,7 +60,7 @@ function LoginPage() {
           </p>
         </div>
 
-        <div style={{
+        <div className="login-card" style={{
           background: 'rgba(18,18,18,0.95)',
           border: '1px solid rgba(255,140,66,0.18)',
           borderRadius: 14, padding: '36px 32px',

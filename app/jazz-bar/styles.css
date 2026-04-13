@@ -560,6 +560,11 @@ input[type="range"]::-moz-range-thumb {
   letter-spacing: 0.05em;
 }
 
+/* ═══════════════════════════════════════════════
+   PC-ONLY STYLES (min-width: 768px)
+   All rules below only apply to desktop/tablet.
+   ═══════════════════════════════════════════════ */
+
 /* ── Responsive Mixing Container ── */
 .jazz-mixing-container {
   min-height: 100dvh;
@@ -568,7 +573,9 @@ input[type="range"]::-moz-range-thumb {
 @media (min-width: 768px) {
   .jazz-mixing-container {
     height: 100dvh;
-    overflow: hidden;
+    /* Use overflow-y: auto instead of hidden to prevent card overlap
+       when the window is resized smaller than the content height */
+    overflow-y: auto;
   }
 }
 
@@ -586,20 +593,99 @@ input[type="range"]::-moz-range-thumb {
 @media (min-width: 768px) {
   .mixing-grid {
     display: grid;
-    grid-template-rows: auto 3fr auto 1fr 1fr auto;
+    /* Use minmax() so rows never collapse below minimum content height */
+    grid-template-rows: auto minmax(120px, 3fr) auto minmax(60px, 1fr) minmax(60px, 1fr) auto;
     flex: 1;
     min-height: 0;
   }
 }
 
-/* ── Button responsive sizing ── */
-@media (max-width: 480px) {
-  .shake-button {
-    font-size: 11px;
-    padding: 14px 32px;
+/* ═══════════════════════════════════════════════
+   MOBILE-ONLY STYLES (max-width: 767px)
+   Fully isolated from desktop — changes here have
+   NO effect on the ≥768px desktop experience.
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+
+  /* ── Safe area insets + scroll room ── */
+  .jazz-mixing-container {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
+
+  /* ── Section cards: reduce padding on mobile ── */
+  .jazz-section {
+    padding: 10px 12px !important;
+  }
+
+  /* ── Option cards: 44px minimum touch target ── */
+  .option-card {
+    min-height: 60px;
+  }
+
+  /* ── SHAKE button: comfortable touch target ── */
+  .shake-button {
+    font-size: 10px;
+    padding: 16px 32px;
+    min-width: 160px;
+  }
+
+  /* ── Enter button: comfortable touch target ── */
   .enter-button {
     font-size: 10px;
+    padding: 16px 32px;
+    min-width: 140px;
+  }
+
+  /* ── Back/New-Mix button ── */
+  .back-button {
+    font-size: 8px;
     padding: 14px 28px;
+    min-width: 140px;
+  }
+
+  /* ── Player controls: 44px touch target ── */
+  .player-control {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* ── Login card: reduced horizontal padding ── */
+  .login-card {
+    padding: 28px 20px !important;
+  }
+
+  /* ── Section title: slightly smaller on mobile ── */
+  .section-title {
+    font-size: 9px;
+  }
+
+  /* ── Mixing grid gap: slightly tighter on mobile ── */
+  .mixing-grid {
+    gap: 6px;
+  }
+
+  /* ── Subtitle glow: reduce letter-spacing on small screens ── */
+  .subtitle-glow {
+    letter-spacing: 0.08em;
+  }
+}
+
+/* ── Very small phones (≤375px) ── */
+@media (max-width: 375px) {
+
+  /* ── Neon sign title: fluid scaling on tiny screens ── */
+  .neon-sign-text {
+    font-size: clamp(13px, 5vw, 20px) !important;
+  }
+
+  /* ── Option cards: slightly smaller minimum ── */
+  .option-card {
+    min-height: 56px;
+  }
+
+  /* ── Section title: minimal size ── */
+  .section-title {
+    font-size: 8px;
   }
 }
