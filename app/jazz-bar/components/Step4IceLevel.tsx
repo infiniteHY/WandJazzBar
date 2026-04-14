@@ -8,23 +8,23 @@ const ICE_LEVELS = [
   { id: 'heavy', name: '多冰', icon: '❄️', desc: 'SYNC',   color: '#c084fc' }
 ]
 
-export default function Step4IceLevel({ compact = false, expanded = false }: { compact?: boolean; expanded?: boolean }) {
+export default function Step4IceLevel() {
   const { state, dispatch } = useJazzBar()
 
   return (
-    <div className={expanded ? 'flex flex-col flex-1' : ''}>
-      <h2 className={`section-title ${expanded ? 'mb-1.5' : 'mb-2'}`}>04 · ICE</h2>
-      <div className={`grid grid-cols-3 ${compact ? 'gap-1' : 'gap-1.5'} ${expanded ? 'flex-1' : ''}`}>
+    <div>
+      <h2 className="section-title mb-2">04 · ICE</h2>
+      <div className="grid grid-cols-3 gap-1.5">
         {ICE_LEVELS.map(ice => {
           const isSelected = state.mixingParams.ice_level === ice.id
           return (
             <button
               key={ice.id}
               onClick={() => dispatch({ type: 'SET_ICE_LEVEL', level: ice.id })}
-              className={`option-card text-center ${isSelected ? 'selected' : ''} ${expanded ? 'flex flex-col items-center justify-center' : ''}`}
-              style={compact ? { padding: '8px 4px' } : expanded ? { padding: '8px 4px' } : undefined}
+              className={`option-card text-center ${isSelected ? 'selected' : ''}`}
+              style={{ padding: '8px 4px' }}
             >
-              <div className={`${compact ? 'text-xl' : 'text-xl'} mb-0.5 relative z-10`}>{ice.icon}</div>
+              <div className="text-xl mb-0.5 relative z-10">{ice.icon}</div>
               <div className="relative z-10" style={{ fontFamily: "'Noto Serif SC', serif", fontSize: '12px', fontWeight: 500, color: isSelected ? ice.color : 'rgba(245,245,245,0.85)' }}>
                 {ice.name}
               </div>

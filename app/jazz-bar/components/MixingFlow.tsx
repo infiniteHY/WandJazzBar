@@ -75,11 +75,11 @@ export default function MixingFlow() {
         </div>
 
         {/* Row 1: Step1 + Step2 — stacked on mobile, side-by-side on md+ */}
-        <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:min-h-0">
-          <div className="jazz-section fade-in-up stagger-1 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
+        <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
+          <div className="jazz-section fade-in-up stagger-1" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
-          <div className="jazz-section fade-in-up stagger-2 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
+          <div className="jazz-section fade-in-up stagger-2" style={{ padding: '10px 14px' }}>
             <Step2Ingredients />
           </div>
         </div>
@@ -89,14 +89,14 @@ export default function MixingFlow() {
           <Step3Mood />
         </div>
 
-        {/* Row 3: Step4 full width — 卡片风格同03 */}
-        <div className="jazz-section fade-in-up stagger-4 flex flex-col" style={{ padding: '10px 14px' }}>
-          <Step4IceLevel expanded />
+        {/* Row 3: Step4 full width */}
+        <div className="jazz-section fade-in-up stagger-4" style={{ padding: '10px 14px' }}>
+          <Step4IceLevel />
         </div>
 
-        {/* Row 4: Step5 full width — 卡片风格同03 */}
-        <div className="jazz-section fade-in-up stagger-5 flex flex-col" style={{ padding: '10px 14px' }}>
-          <Step5Shake expanded />
+        {/* Row 4: Step5 full width */}
+        <div className="jazz-section fade-in-up stagger-5" style={{ padding: '10px 14px' }}>
+          <Step5Shake />
         </div>
 
         {/* SHAKE button */}
