@@ -1,20 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { buildJazzTrackId, validateMixingParams, type MixingParams } from '@/lib/jazz/utils'
-import { generateWithMiniMax , getFallbackTrack } from '@/lib/jazz/generator'
+import { generateWithVectrust } from '@/lib/jazz/generator'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 export const revalidate = 0
 
+function hasChineseText(value: string | null | undefined): boolean {
+  return /[\u3400-\u9fff]/.test(value || '')
+}
+
 /**
  * GET /api/jazz/tracks
  *
- * 查询或生成音轨
+ * Query or generate a jazz track.
  *
  * Query params:
  * - base_spirit: string
- * - ingredients: string[] (可多个)
+ * - ingredients: string[]
  * - mood: string
  * - mood_intensity: number
  * - ice_level: string
@@ -24,7 +28,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
 
-    // 解析参数
+    // Parse parameters.
     const params: Partial<MixingParams> = {
       base_spirit: searchParams.get('base_spirit') || undefined,
       ingredients: searchParams.getAll('ingredients'),
@@ -36,46 +40,57 @@ export async function GET(request: NextRequest) {
       shake_level: searchParams.get('shake_level') || undefined
     }
 
-    // 验证参数
+    // Validate parameters.
     if (!validateMixingParams(params)) {
       return NextResponse.json({
-        error: '参数不完整或无效'
+        error: 'Missing or invalid parameters'
       }, { status: 400 })
     }
 
-    // 构造唯一键
+    // Build the cache key.
     const trackId = buildJazzTrackId(params)
+    const forceGenerate = searchParams.get('force') === 'true' || searchParams.get('force') === '1'
 
     let track: any = null
     let isNew = false
+    let shouldRefreshCachedTrack = false
 
-    // 尝试从数据库查询缓存
-    if (prisma) {
+    // Try the database cache first.
+    if (prisma && !forceGenerate) {
       try {
         track = await prisma.jazzTrack.findUnique({
           where: { id: trackId }
         })
         if (track) {
-          console.log('[Jazz API] 命中缓存:', trackId)
+          console.log('[Jazz API] Cache hit:', trackId)
+          if (!hasChineseText(track.track_name_zh) || !hasChineseText(track.poem_zh)) {
+            console.log('[Jazz API] Cached bilingual fields are stale; regenerating:', trackId)
+            shouldRefreshCachedTrack = true
+            track = null
+          }
         }
       } catch (dbError) {
-        console.warn('[Jazz API] 数据库查询失败，跳过缓存:', dbError)
+        console.warn('[Jazz API] Database query failed; skipping cache:', dbError)
       }
     }
 
-    // 如果不存在，生成新音轨
+    // Generate a new track on cache miss.
     if (!track) {
       isNew = true
+      shouldRefreshCachedTrack = shouldRefreshCachedTrack || forceGenerate
 
       let generated
       try {
-        console.log('[Jazz API] 生成新音轨:', trackId)
-        generated = await generateWithMiniMax(params)
-        console.log('[Jazz API] 音轨生成成功')
+        console.log('[Jazz API] Generating track:', trackId)
+        generated = await generateWithVectrust(params)
+        console.log('[Jazz API] Track generated')
       } catch (error) {
-        console.error('[Jazz API] MiniMax 生成失败，使用降级方案:', error)
-        generated = getFallbackTrack(params)
-        console.log('[Jazz API] 使用降级模板成功')
+        console.error('[Jazz API] Vectrust generation failed:', error)
+        return NextResponse.json({
+          success: false,
+          error: 'Track generation failed',
+          message: error instanceof Error ? error.message : 'Unknown generation error'
+        }, { status: 502 })
       }
 
       const trackData = {
@@ -100,12 +115,18 @@ export async function GET(request: NextRequest) {
         instruments: JSON.stringify(generated.music.instruments)
       }
 
-      // 尝试存入数据库，失败不影响返回
+      // Best-effort database write; response should still succeed if it fails.
       if (prisma) {
         try {
-          track = await prisma.jazzTrack.create({ data: trackData })
+          track = shouldRefreshCachedTrack
+            ? await prisma.jazzTrack.upsert({
+                where: { id: trackId },
+                create: trackData,
+                update: trackData,
+              })
+            : await prisma.jazzTrack.create({ data: trackData })
         } catch (dbError) {
-          console.warn('[Jazz API] 数据库写入失败，直接返回:', dbError)
+          console.warn('[Jazz API] Database write failed; returning directly:', dbError)
           track = { ...trackData, play_count: 0, created_at: new Date(), updated_at: new Date() }
         }
       } else {
@@ -120,10 +141,10 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Jazz API] 错误:', error)
+    console.error('[Jazz API] Error:', error)
     return NextResponse.json({
-      error: '服务器错误',
-      message: error instanceof Error ? error.message : '未知错误'
+      error: 'Server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 })
   }
 }

@@ -3,10 +3,10 @@
 import { useJazzBar } from '../context/JazzBarContext'
 
 const SPIRITS = [
-  { id: 'whiskey', name: '威士忌', icon: '🥃', desc: 'Blues', color: '#ff8c42' },
-  { id: 'gin', name: '金酒', icon: '🍸', desc: 'Swing', color: '#38bdf8' },
-  { id: 'rum', name: '朗姆酒', icon: '🍹', desc: 'Latin', color: '#c084fc' },
-  { id: 'tequila', name: '龙舌兰', icon: '🌵', desc: 'Exp.', color: '#ff6b9d' }
+  { id: 'whiskey', name: 'Whiskey', icon: '🥃', desc: 'Blues', color: '#ff8c42' },
+  { id: 'gin', name: 'Gin', icon: '🍸', desc: 'Swing', color: '#38bdf8' },
+  { id: 'rum', name: 'Rum', icon: '🍹', desc: 'Latin', color: '#c084fc' },
+  { id: 'tequila', name: 'Tequila', icon: '🌵', desc: 'Exp.', color: '#ff6b9d' }
 ]
 
 export default function Step1BaseSpirit() {
@@ -26,14 +26,12 @@ export default function Step1BaseSpirit() {
               key={spirit.id}
               onClick={() => dispatch({ type: 'SET_BASE_SPIRIT', spirit: spirit.id })}
               className={`option-card text-center ${isSelected ? 'selected' : ''}`}
-              style={{ padding: '8px 4px' }}
             >
-              <div className="text-xl mb-0.5 relative z-10">{spirit.icon}</div>
+              <div className="option-icon relative z-10">{spirit.icon}</div>
               <div
-                className="relative z-10 mb-0.5"
+                className="option-label relative z-10"
                 style={{
-                  fontFamily: "'Noto Serif SC', serif",
-                  fontSize: '12px',
+                  fontFamily: "'Playfair Display', serif",
                   fontWeight: 500,
                   color: isSelected ? spirit.color : 'rgba(245, 245, 245, 0.85)',
                 }}
@@ -41,10 +39,9 @@ export default function Step1BaseSpirit() {
                 {spirit.name}
               </div>
               <div
-                className="relative z-10"
+                className="option-desc relative z-10"
                 style={{
                   fontFamily: "'Press Start 2P', cursive",
-                  fontSize: '7px',
                   color: isSelected ? spirit.color : 'rgba(160, 160, 160, 0.4)',
                   textShadow: isSelected ? `0 0 6px ${spirit.color}40` : 'none',
                 }}

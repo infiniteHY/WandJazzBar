@@ -1,10 +1,12 @@
-import Anthropic from "@anthropic-ai/sdk"
+import Anthropic from '@anthropic-ai/sdk'
 import { MixingParams } from './utils'
 
 const client = new Anthropic({
-  apiKey: process.env.MINIMAX_API_KEY || '',
-  baseURL: "https://api.minimax.io/anthropic"
+  apiKey: process.env.VECTRUST_API_KEY || '',
+  baseURL: process.env.VECTRUST_BASE_URL || 'https://api.openai-next.com',
 })
+
+const MODEL = process.env.VECTRUST_MODEL || 'claude-opus-4-7'
 
 export interface GeneratedTrack {
   id: string
@@ -55,14 +57,14 @@ export interface GeneratedTrack {
 }
 
 /**
- * 构造系统提示词
+ * Build the system prompt.
  */
 function buildSystemPrompt(): string {
-  return `你是一位精通爵士乐作曲的 AI 作曲家，同时具备深厚的鸡尾酒调配美学品味。
-你的任务是：根据用户提供的调酒参数，生成一段完整的爵士乐曲结构，并以严格的 JSON 格式输出，不包含任何解释文字。
+  return `You are an expert jazz composer with strong cocktail aesthetics.
+Create one complete jazz track from the supplied cocktail parameters.
+Return strict JSON only. Do not include explanations, markdown fences, or extra text.
 
-【输出格式要求】
-必须输出一个合法的 JSON 对象，字段如下：
+Output schema:
 
 {
 "id": "base_spirit_ingredient_mood_intensity_ice_shake",
@@ -70,119 +72,118 @@ function buildSystemPrompt(): string {
 "base_spirit": "whiskey | gin | rum | tequila",
 "ingredients": "lemon | mint | coffee | smoke | honey | soda",
 "mood": "calm | sad | mysterious | romantic | energetic",
-"mood_intensity": "1-5整数",
+"mood_intensity": "integer from 1 to 5",
 "ice_level": "none | light | heavy",
 "shake_level": "soft | medium | hard"
 },
 "tags": {
 "style": "blues | swing | latin | experimental",
 "mode": "major | minor | diminished | major7 | mixolydian",
-"energy_level": "low | medium | high（由bpm决定：<80 low，80-120 medium，>120 high）",
-"rhythm_complexity": "low | medium | high（由shake_level决定）",
-"brightness": "bright | dark | warm | fresh（由ingredient决定）",
+"energy_level": "low | medium | high, derived from bpm: below 80 low, 80-120 medium, above 120 high",
+"rhythm_complexity": "low | medium | high, derived from shake_level",
+"brightness": "bright | dark | warm | fresh, derived from ingredients",
 "texture": ["staccato", "legato", "syncopation", "swing"]
 },
 "music": {
-"track_name_en": "英文曲名（古典爵士风，如 Nocturne in ... / Reverie of ... / Serenade of ... / Ballad of ...，禁止现代词汇）",
-"track_name_zh": "中文曲名（2-6字，诗意表达）",
+"track_name_en": "classic literary jazz title, e.g. Nocturne in ..., Reverie of ..., Serenade of ..., Ballad of ...; avoid modern words",
+"track_name_zh": "Chinese title, 2-6 characters, poetic and concise",
 "poem_en": [
-"第一行（8-12音节，押韵）",
-"第二行（8-12音节，押韵）",
-"第三行（8-12音节，押韵）",
-"第四行（8-12音节，押韵）"
+"line one, 8-12 syllables, rhymed",
+"line two, 8-12 syllables, rhymed",
+"line three, 8-12 syllables, rhymed",
+"line four, 8-12 syllables, rhymed"
 ],
 "poem_zh": [
-"第一行（5-7字）",
-"第二行（5-7字）",
-"第三行（5-7字）",
-"第四行（5-7字）"
+"Chinese line one, 5-8 characters",
+"Chinese line two, 5-8 characters",
+"Chinese line three, 5-8 characters",
+"Chinese line four, 5-8 characters"
 ],
-"bpm": "60-160之间的数字",
-"key": "如 C Major 或 A Minor",
+"bpm": "number from 60 to 160",
+"key": "e.g. C Major or A Minor",
 "mode": "major | minor | diminished | major7 | mixolydian",
 "time_signature": "2/4 | 3/4 | 4/4",
 "style": "blues | swing | latin | experimental",
-"chord_progression": ["和弦1", "和弦2", "和弦3", "和弦4"],
+"chord_progression": ["chord 1", "chord 2", "chord 3", "chord 4"],
 "melody": [
 { "note": "C4", "duration": "4n", "time": 0 }
 ],
-"instruments": ["2-4种乐器，如 piano, bass, drums, saxophone, guitar"]
+"instruments": ["2-4 instruments, e.g. piano, bass, drums, saxophone, guitar"]
 },
 "meta": {
 "version": "v1",
-"generated_at": "ISO时间格式（如 2026-03-18T00:00:00Z）",
-"generator": "minimax",
+"generated_at": "ISO timestamp, e.g. 2026-03-18T00:00:00Z",
+"generator": "vectrust",
 "valid": true
 }
 }
 
+Composition rules:
 
-【作曲规则】
+1. Base spirit sets the core style.
+   - whiskey -> Blues / Slow Jazz, BPM 60-80, strong blues scale color
+   - gin -> Light Swing, BPM 100-130, airy and bouncing
+   - rum -> Latin Jazz, BPM 100-140, syncopated pulse
+   - tequila -> Experimental / Fast, BPM 130-160, irregular rhythm
 
-1. 基酒 → 风格基调
-   - whiskey → Blues / Slow Jazz，BPM 60-80，大量蓝调音阶
-   - gin → Light Swing，BPM 100-130，轻盈跳跃
-   - rum → Latin Jazz，BPM 100-140，切分节奏
-   - tequila → Experimental / Fast，BPM 130-160，不规则节奏
+2. Mood sets mode.
+   - calm -> Major, peaceful movement
+   - sad -> Minor, descending melodic gestures
+   - mysterious -> Diminished, unstable harmony
+   - romantic -> Major 7th, gentle tension
+   - energetic -> Mixolydian, forward drive
 
-2. 情绪 → 调式选择
-   - calm → Major，平和进行
-   - sad → Minor，下行旋律
-   - mysterious → Diminished，不稳定和弦
-   - romantic → Major 7th，温柔张力
-   - energetic → Mixolydian，推进感
+3. Mood intensity controls melodic range.
+   - 1-2: stable melody, small intervals of 2-3 degrees
+   - 3: moderate contour, 3-5 degrees
+   - 4-5: wider leaps, dramatic movement of 6-8 degrees
 
-3. 情绪强度（1-5）→ 旋律起伏幅度
-   - 1-2：旋律平稳，音程小（2-3度跳进）
-   - 3：适中起伏（3-5度）
-   - 4-5：大跳进，戏剧化（6-8度）
+4. Ingredients add details.
+   - lemon -> staccato, bright upper-register notes
+   - mint -> swing feel and ornaments
+   - coffee -> richer extended chords such as #11 or b9
+   - smoke -> lower register emphasis and blues slides
+   - honey -> legato and softer dynamics
+   - soda -> lighter texture and open spacing
 
-4. 配料 → 音乐细节
-   - lemon（柠檬）→ staccato 断奏，明亮音符（高音区）
-   - mint（薄荷）→ swing feel，加入装饰音
-   - coffee（咖啡）→ 增加复杂和弦（如 #11, b9）
-   - smoke（烟熏）→ 低音区强调，蓝调滑音
-   - honey（蜂蜜）→ legato 连奏，柔和力度
+5. Ice level shapes rhythm.
+   - none -> continuous legato with few pauses
+   - light -> tasteful rests
+   - heavy -> syncopation and small breaks
 
-5. 冰量 → 节奏处理
-   - none（无冰）→ 连贯 legato，无明显停顿
-   - light（少冰）→ 适度休止符
-   - heavy（多冰）→ 切分节奏，syncopation，加入 break
+6. Shake level controls complexity.
+   - soft -> smooth 4/4 and basic groove
+   - medium -> stronger swing eighth notes
+   - hard -> triplets, syncopation, irregular accents
 
-6. Shake 强度 → 节奏复杂度
-   - soft → 平稳 4/4，基础律动
-   - medium → 加入 swing 八分音符
-   - hard → 三连音、切分、不规则重音
+Naming rules:
+- Use literary classic jazz titles.
+- Preferred patterns: Nocturne in [adjective], Reverie of [image], [adjective] Serenade, Ballad of [image].
+- Avoid modern words such as Mix, Blend, Cool, or Vibe.
+- track_name_en and poem_en must be English.
+- track_name_zh and poem_zh must be Chinese.
+- The English poem and Chinese poem should share the same mood, but the Chinese version should read like an independent short poem rather than a literal translation.
 
-【命名规则】
+Poem rules:
+- Four English lines.
+- Each line should have 8-12 syllables and a jazz-night atmosphere.
+- Use ABAB or AABB rhyme.
+- Four Chinese lines.
+- Each Chinese line should have 5-8 Chinese characters with compact imagery.
 
-英文曲名：
-- 必须有古典爵士/文学气质
-- 模式参考：Nocturne in [形容词]，Reverie of [意象]，[形容词] Serenade，Ballad of [意象]
-- 禁止使用现代感词汇（如 Mix, Blend, Cool, Vibe）
+Melody format:
+- note: standard pitch name such as C4, D#4, or Bb3.
+- duration: Tone.js duration such as "4n", "8n", "2n", or "16n".
+- time: numeric beat offset from the beginning.
 
-中文曲名：
-- 2-6字，诗意
-- 可参考：夜色、烟雨、弦断、微醺、月光等意象
+Strict constraints:
+- Output JSON only.
+- JSON must be valid and directly parseable.
+- melody must contain 16-24 events.
+- chord_progression must contain exactly 4 chords.
+- instruments must contain 2-4 instruments.
 
-四行诗规则：
-- 英文：每行 8-12 音节，押韵（ABAB 或 AABB），爵士夜晚氛围
-- 中文：每行 5-7 字，意象化，不可直译英文，独立成诗
-- 两组诗必须均为4行
-
-【melody 格式说明】
-- note：标准 MIDI 音名，如 C4、D#4、Bb3
-- duration：Tone.js 时值格式，如 "4n"（四分音符）、"8n"（八分音符）、"2n"（二分音符）、"16n"（十六分音符）
-- time：相对于起始的时间偏移（单位：拍），数字类型
-
-【严格约束】
-- 只输出 JSON，不含任何 Markdown 代码块标记（不要json）
-- JSON 必须合法，可直接 JSON.parse()
-- melody 数组必须有 16-24 个元素
-- chord_progression 必须有 4 个和弦
-- instruments 必须包含 2-4 种乐器
-
-- 示例输出 JSON
+Example output:
 
 {
   "id": "whiskey_lemon_sad_3_heavy_medium",
@@ -217,10 +218,10 @@ function buildSystemPrompt(): string {
     ],
 
     "poem_zh": [
-      "柠影浮残夜，",
-      "孤杯映微凉，",
-      "风动旧时梦，",
-      "曲终人未央。"
+      "柠影浮残夜",
+      "孤杯映微凉",
+      "风动旧时梦",
+      "曲终人未央"
     ],
 
     "bpm": 68,
@@ -256,17 +257,21 @@ function buildSystemPrompt(): string {
   "meta": {
     "version": "v1",
     "generated_at": "2026-03-18T00:00:00Z",
-    "generator": "minimax",
+    "generator": "vectrust",
     "valid": true
   }
 }`
 }
 
 /**
- * 构造用户提示词
+ * Build the user prompt.
  */
 function buildUserPrompt(params: MixingParams): string {
-  return `请为以下调酒组合创作一首爵士乐：
+  return `Return only one valid JSON object. The first character must be "{" and the last character must be "}".
+Do not output markdown, headings, commentary, tables, explanations, or code fences.
+Do not write a prose composition brief. Generate the JSON data directly.
+
+Compose one jazz track for this cocktail combination:
 
 base_spirit: ${params.base_spirit}
 ingredients: ${JSON.stringify(params.ingredients)}
@@ -275,16 +280,17 @@ mood_intensity: ${params.mood_intensity}/5
 ice_level: ${params.ice_level}
 shake_level: ${params.shake_level}
 
-根据以上参数，遵循参数映射规则，生成符合意境的爵士乐曲。`
+Follow the parameter mapping rules and generate an atmospheric jazz track.
+
+Again: return only valid JSON.`
 }
 
 /**
- * 🧠 提取 JSON（关键：防止模型多说话）
- * 使用括号匹配而非贪婪正则，避免多余内容
+ * Extract JSON while ignoring any accidental surrounding text.
  */
 function extractJSON(text: string): string {
   const start = text.indexOf('{')
-  if (start === -1) throw new Error("未找到JSON")
+  if (start === -1) throw new Error("JSON not found")
 
   let depth = 0
   let inString = false
@@ -300,19 +306,16 @@ function extractJSON(text: string): string {
     if (ch === '}') { depth--; if (depth === 0) return text.slice(start, i + 1) }
   }
 
-  // 如果括号未闭合，尝试补全
+  // Try to repair truncated JSON.
   if (depth > 0) {
     let truncated = text.slice(start)
-    // 移除末尾不完整的元素（如被截断的 melody 对象）
+    // Remove a trailing incomplete element, such as a truncated melody object.
     const lastComplete = truncated.lastIndexOf('}')
     if (lastComplete > 0) {
       truncated = truncated.slice(0, lastComplete + 1)
     }
-    // 补全缺失的 ] 和 }
+    // Close missing arrays and objects.
     while (depth > 0) {
-      // 检查是否需要先关闭数组
-      const lastOpen = Math.max(truncated.lastIndexOf('['), truncated.lastIndexOf('{'))
-      const lastClose = Math.max(truncated.lastIndexOf(']'), truncated.lastIndexOf('}'))
       if (truncated.lastIndexOf('[') > truncated.lastIndexOf(']')) {
         truncated += ']'
       }
@@ -322,54 +325,44 @@ function extractJSON(text: string): string {
     return truncated
   }
 
-  throw new Error("未找到完整JSON")
+  throw new Error("Complete JSON not found")
 }
 
 /**
- * 主函数（Anthropic接口）
+ * Main generation function using the Anthropic-compatible Vectrust API.
  */
-export async function generateWithMiniMax(
+export async function generateWithVectrust(
   params: MixingParams
 ): Promise<GeneratedTrack> {
-  try {
+  let lastError: unknown
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
     const response = await client.messages.create({
-      model: "MiniMax-M2.5", // 推荐
+      model: MODEL,
       max_tokens: 8192,
       temperature: 0.4,
-
-      system: buildSystemPrompt(),
-
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: buildUserPrompt(params)
-            }
-          ]
+          content: `${buildSystemPrompt()}\n\n${buildUserPrompt(params)}`
         }
       ]
     })
 
-    /**
-     * ⚠️ Anthropic格式解析
-     */
     let text = ""
-
     for (const block of response.content) {
       if (block.type === "text") {
         text += block.text
       }
     }
+    if (!text) throw new Error("Empty response")
 
-    if (!text) throw new Error("空响应")
-
-    console.log("🧠 MiniMax stop_reason:", response.stop_reason, "usage:", JSON.stringify(response.usage))
-    console.log("🧠 MiniMax raw:", text.slice(0, 200), "...(length:", text.length, ")")
+    console.log("[Vectrust] stop_reason:", response.stop_reason, "usage:", JSON.stringify(response.usage))
+    console.log("[Vectrust] raw:", text.slice(0, 200), "...(length:", text.length, ")")
 
     /**
-     * 提取 JSON
+     * Extract JSON.
      */
     const jsonStr = extractJSON(text)
     let parsed: GeneratedTrack
@@ -380,16 +373,16 @@ export async function generateWithMiniMax(
       console.warn("JSON parse failed, attempting repair:", (parseErr as Error).message)
       let repaired = jsonStr
 
-      // 1. 补全漏写的逗号：相邻字符串之间（"...\n"..."）
+      // Add missing commas between adjacent strings.
       repaired = repaired.replace(/"(\s*\n\s*)"/g, '",\n"')
-      // 2. 补全漏写的逗号：相邻对象之间（}\n{）
+      // Add missing commas between adjacent objects.
       repaired = repaired.replace(/\}(\s*\n\s*)\{/g, '},\n{')
-      // 3. 移除末尾多余逗号（,] 或 ,}）
+      // Remove trailing commas.
       repaired = repaired.replace(/,(\s*[\]\}])/g, '$1')
-      // 4. 移除末尾不完整的对象元素
+      // Remove a trailing incomplete object member.
       repaired = repaired.replace(/,\s*\{\s*"[^"]*"\s*:\s*"?[^}\]]*$/, '')
 
-      // 5. 补全缺失的括号
+      // Close missing brackets.
       const opens = (repaired.match(/\[/g) || []).length - (repaired.match(/\]/g) || []).length
       const braces = (repaired.match(/\{/g) || []).length - (repaired.match(/\}/g) || []).length
       for (let i = 0; i < opens; i++) repaired += ']'
@@ -399,7 +392,7 @@ export async function generateWithMiniMax(
     }
 
     /**
-     * 校验（melody 允许截断后少于16个）
+     * Validate the minimum structure.
      */
     if (
       !parsed.id ||
@@ -408,102 +401,15 @@ export async function generateWithMiniMax(
       !parsed.music.melody ||
       parsed.music.melody.length < 8
     ) {
-      throw new Error("结构不完整")
+      throw new Error("Incomplete structure")
     }
 
-    return parsed
-  } catch (err) {
-    console.error("MiniMax error:", err)
-    throw err
-  }
-}
-
-/**
- * 降级方案：返回预设模板
- */
-export function getFallbackTrack(params: MixingParams): GeneratedTrack {
-  const bpmMap: Record<string, number> = {
-    whiskey: 72,
-    gin: 120,
-    rum: 120,
-    tequila: 140
-  }
-
-  const styleMap: Record<string, string> = {
-    whiskey: 'blues',
-    gin: 'swing',
-    rum: 'latin',
-    tequila: 'experimental'
-  }
-
-  const moodKey: Record<string, { key: string; mode: string }> = {
-    calm: { key: 'C Major', mode: 'major' },
-    sad: { key: 'A Minor', mode: 'minor' },
-    mysterious: { key: 'F# Diminished', mode: 'diminished' },
-    romantic: { key: 'F Major', mode: 'major7' },
-    energetic: { key: 'G Mixolydian', mode: 'mixolydian' }
-  }
-
-  const { key, mode } = moodKey[params.mood] || { key: 'C Major', mode: 'major' }
-
-  return {
-    id: `${params.base_spirit}_${params.ingredients.join("+")}_${params.mood}_${params.mood_intensity}_${params.ice_level}_${params.shake_level}`,
-
-    input_params: params,
-
-    tags: {
-      style: "swing",
-      mode: "major",
-      energy_level: "medium",
-      rhythm_complexity: "medium",
-      brightness: "bright",
-      texture: ["legato", "swing"]
-    },
-
-    music: {
-      track_name_en: "Nocturne in Silver Citrus",
-      track_name_zh: "柠夜微醺",
-
-      poem_en: [
-        "Soft echoes drift through twilight's gentle air",
-        "A silver glow dissolves in whispered light",
-        "The rhythm sways with scents both bright and rare",
-        "As shadows dance beneath the velvet night"
-      ],
-
-      poem_zh: [
-        "柠香浮夜色",
-        "微光落杯中",
-        "弦影随风转",
-        "心随酒意浓"
-      ],
-
-      bpm: 110,
-      key: "C Major",
-      mode: "major",
-      time_signature: "4/4",
-      style: "swing",
-
-      chord_progression: ["Cmaj7", "Am7", "Dm7", "G7"],
-
-      melody: [
-        { note: "E4", duration: "8n", time: 0 },
-        { note: "G4", duration: "8n", time: 0.5 },
-        { note: "A4", duration: "4n", time: 1 },
-        { note: "G4", duration: "8n", time: 2 },
-        { note: "E4", duration: "8n", time: 2.5 },
-        { note: "D4", duration: "4n", time: 3 },
-        { note: "C4", duration: "2n", time: 4 }
-      ],
-
-      instruments: ["piano", "bass", "drums"]
-    },
-
-    meta: {
-      version: "v1",
-      generated_at: new Date().toISOString(),
-      generator: "fallback",
-      valid: true
+      return parsed
+    } catch (err) {
+      lastError = err
+      console.error(`Vectrust error on attempt ${attempt}:`, err)
     }
   }
+
+  throw lastError instanceof Error ? lastError : new Error("Vectrust generation failed")
 }

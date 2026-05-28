@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Serif+SC:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 :root {
   --jazz-bg: #0d0d0d;
@@ -28,7 +28,7 @@ html {
 body {
   color: var(--jazz-white);
   background: var(--jazz-bg);
-  font-family: 'Noto Serif SC', serif;
+  font-family: 'Playfair Display', serif;
   overflow-x: hidden;
 }
 

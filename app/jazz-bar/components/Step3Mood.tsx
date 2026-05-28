@@ -3,11 +3,11 @@
 import { useJazzBar } from '../context/JazzBarContext'
 
 const MOODS = [
-  { id: 'calm',       name: '平静', icon: '🌙', desc: 'MAJ',  color: '#38bdf8' },
-  { id: 'sad',        name: '忧伤', icon: '🌧️', desc: 'MIN',  color: '#c084fc' },
-  { id: 'mysterious', name: '神秘', icon: '🔮', desc: 'DIM',  color: '#a78bfa' },
-  { id: 'romantic',   name: '浪漫', icon: '🌹', desc: 'MAJ7', color: '#ff6b9d' },
-  { id: 'energetic',  name: '活力', icon: '⚡', desc: 'MIX',  color: '#ff8c42' }
+  { id: 'calm',       name: 'Calm', icon: '🌙', desc: 'MAJ',  color: '#38bdf8' },
+  { id: 'sad',        name: 'Blue', icon: '🌧️', desc: 'MIN',  color: '#c084fc' },
+  { id: 'mysterious', name: 'Mystic', icon: '🔮', desc: 'DIM',  color: '#a78bfa' },
+  { id: 'romantic',   name: 'Romance', icon: '🌹', desc: 'MAJ7', color: '#ff6b9d' },
+  { id: 'energetic',  name: 'Bright', icon: '⚡', desc: 'MIX',  color: '#ff8c42' }
 ]
 
 export default function Step3Mood() {
@@ -26,7 +26,6 @@ export default function Step3Mood() {
         </span>
       </div>
 
-      {/* Mood cards — compact */}
       <div className="grid grid-cols-5 gap-1.5 mb-3">
         {MOODS.map(mood => {
           const isSelected = state.mixingParams.mood === mood.id
@@ -35,13 +34,12 @@ export default function Step3Mood() {
               key={mood.id}
               onClick={() => dispatch({ type: 'SET_MOOD', mood: mood.id, intensity })}
               className={`option-card text-center ${isSelected ? 'selected' : ''}`}
-              style={{ padding: '8px 4px' }}
             >
-              <div className="text-xl mb-0.5 relative z-10">{mood.icon}</div>
-              <div className="text-xs relative z-10" style={{ fontFamily: "'Noto Serif SC', serif", fontWeight: 500, color: isSelected ? mood.color : 'rgba(245,245,245,0.75)' }}>
+              <div className="option-icon relative z-10">{mood.icon}</div>
+              <div className="option-label relative z-10" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600, color: isSelected ? mood.color : 'rgba(245,245,245,0.75)' }}>
                 {mood.name}
               </div>
-              <div className="relative z-10" style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px', color: isSelected ? mood.color : 'rgba(160,160,160,0.3)' }}>
+              <div className="option-desc relative z-10" style={{ fontFamily: "'Press Start 2P', cursive", color: isSelected ? mood.color : 'rgba(160,160,160,0.3)' }}>
                 {mood.desc}
               </div>
             </button>
@@ -49,7 +47,6 @@ export default function Step3Mood() {
         })}
       </div>
 
-      {/* 强度滑块 */}
       <div className="px-1">
         <input
           type="range"

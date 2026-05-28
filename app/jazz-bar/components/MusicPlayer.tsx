@@ -43,7 +43,7 @@ export default function MusicPlayer({ track }: { track: any }) {
   const [currentNote, setCurrentNote] = useState('')
   const [dotTick, setDotTick]         = useState(0)
   const [activeInst, setActiveInst]   = useState('')
-  const [statusText, setStatusText]   = useState('准备就绪')
+  const [statusText, setStatusText]   = useState('Ready')
 
   // refs for real-time volume + pause/resume
   const masterVolRef = useRef<Tone.Volume | null>(null)
@@ -157,16 +157,16 @@ export default function MusicPlayer({ track }: { track: any }) {
 
       Tone.Transport.schedule(() => {
         fullStop()
-        setStatusText('播放完毕 ✓')
+        setStatusText('Finished')
       }, totalDuration)
 
       Tone.Transport.start()
       pausedAtRef.current = 0
       startInterval(0)
       setPlayerState('playing')
-      setStatusText('正在播放')
+      setStatusText('Playing')
     } catch (e: any) {
-      setStatusText('播放出错')
+      setStatusText('Playback error')
       console.error(e)
     } finally {
       setIsLoading(false)
@@ -178,7 +178,7 @@ export default function MusicPlayer({ track }: { track: any }) {
     pausedAtRef.current = pausedAtRef.current + (Date.now() - wallAtRef.current) / 1000
     stopInterval()
     setPlayerState('paused')
-    setStatusText('已暂停')
+    setStatusText('Paused')
     setActiveInst('')
   }
 
@@ -186,12 +186,12 @@ export default function MusicPlayer({ track }: { track: any }) {
     Tone.Transport.start()
     startInterval(pausedAtRef.current)
     setPlayerState('playing')
-    setStatusText('正在播放')
+    setStatusText('Playing')
   }
 
   const handleStop = () => {
     fullStop()
-    setStatusText('已停止')
+    setStatusText('Stopped')
   }
 
   const isPlaying = playerState === 'playing'

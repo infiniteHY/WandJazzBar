@@ -6,15 +6,14 @@ export class JazzPlayer {
   private isInitialized = false
 
   /**
-   * 初始化 Tone.js 音频上下文
-   * 必须在用户交互后调用
+   * Initialize the Tone.js audio context after a user gesture.
    */
   async init() {
     if (this.isInitialized) return
 
     await Tone.start()
 
-    // 钢琴音色（旋律）
+    // Piano voice for melody.
     this.piano = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: 'triangle' },
       envelope: {
@@ -25,7 +24,7 @@ export class JazzPlayer {
       }
     }).toDestination()
 
-    // 和弦音色（背景）
+    // Background chord voice.
     this.chordSynth = new Tone.PolySynth(Tone.Synth, {
       oscillator: { type: 'sine' },
       envelope: {
@@ -36,25 +35,25 @@ export class JazzPlayer {
       }
     }).toDestination()
 
-    this.chordSynth.volume.value = -12 // 和弦音量降低
+    this.chordSynth.volume.value = -12
 
     this.isInitialized = true
-    console.log('[Tone.js] 初始化成功')
+    console.log('[Tone.js] Initialized')
   }
 
   /**
-   * 播放音轨
+   * Play a track.
    */
   async play(track: any) {
     await this.init()
 
-    // 设置 BPM
+    // Set BPM.
     Tone.Transport.bpm.value = track.bpm
 
-    // 清除之前的调度
+    // Clear previous scheduling.
     Tone.Transport.cancel()
 
-    // 解析并调度旋律
+    // Parse and schedule the melody.
     const melody = JSON.parse(track.melody)
     melody.forEach(({ note, duration, time }: any) => {
       Tone.Transport.schedule((t) => {
@@ -62,78 +61,76 @@ export class JazzPlayer {
       }, time)
     })
 
-    // 解析并调度和弦
+    // Parse and schedule chords.
     const chords = JSON.parse(track.chord_progression)
     chords.forEach((chord: string, i: number) => {
       const notes = this.chordToNotes(chord)
       Tone.Transport.schedule((t) => {
         this.chordSynth?.triggerAttackRelease(notes, '2n', t)
-      }, i * 2) // 每个和弦持续 2 拍
+      }, i * 2)
     })
 
-    // 启动播放
+    // Start playback.
     Tone.Transport.start()
-    console.log('[Tone.js] 开始播放:', track.track_name_zh)
+    console.log('[Tone.js] Playing:', track.track_name_en)
   }
 
   /**
-   * 停止播放
+   * Stop playback.
    */
   stop() {
     Tone.Transport.stop()
     Tone.Transport.cancel()
-    console.log('[Tone.js] 停止播放')
+    console.log('[Tone.js] Stopped')
   }
 
   /**
-   * 和弦记号转音符数组
-   * 简化实现，支持常见爵士和弦
+   * Convert chord symbols to note arrays.
    */
   private chordToNotes(chord: string): string[] {
     const chordMap: Record<string, string[]> = {
-      // C 系列
+      // C family
       'Cmaj7': ['C3', 'E3', 'G3', 'B3'],
       'C7': ['C3', 'E3', 'G3', 'Bb3'],
       'Cm7': ['C3', 'Eb3', 'G3', 'Bb3'],
 
-      // D 系列
+      // D family
       'Dmaj7': ['D3', 'F#3', 'A3', 'C#4'],
       'D7': ['D3', 'F#3', 'A3', 'C4'],
       'Dm7': ['D3', 'F3', 'A3', 'C4'],
 
-      // E 系列
+      // E family
       'Emaj7': ['E3', 'G#3', 'B3', 'D#4'],
       'E7': ['E3', 'G#3', 'B3', 'D4'],
       'Em7': ['E3', 'G3', 'B3', 'D4'],
 
-      // F 系列
+      // F family
       'Fmaj7': ['F3', 'A3', 'C4', 'E4'],
       'F7': ['F3', 'A3', 'C4', 'Eb4'],
       'Fm7': ['F3', 'Ab3', 'C4', 'Eb4'],
 
-      // G 系列
+      // G family
       'Gmaj7': ['G2', 'B2', 'D3', 'F#3'],
       'G7': ['G2', 'B2', 'D3', 'F3'],
       'Gm7': ['G2', 'Bb2', 'D3', 'F3'],
 
-      // A 系列
+      // A family
       'Amaj7': ['A2', 'C#3', 'E3', 'G#3'],
       'A7': ['A2', 'C#3', 'E3', 'G3'],
       'Am7': ['A2', 'C3', 'E3', 'G3'],
 
-      // B 系列
+      // B family
       'Bmaj7': ['B2', 'D#3', 'F#3', 'A#3'],
       'B7': ['B2', 'D#3', 'F#3', 'A3'],
       'Bm7': ['B2', 'D3', 'F#3', 'A3'],
 
-      // 减和弦
+      // Diminished chords
       'F#dim7': ['F#3', 'A3', 'C4', 'Eb4'],
       'Bdim7': ['B2', 'D3', 'F3', 'Ab3'],
     }
 
-    // 如果找不到，返回根音和弦
     if (!chordMap[chord]) {
-      console.warn(`[Tone.js] 未知和弦: ${chord}，使用默认`)
+      console.warn(`[Tone.js] Unknown chord: ${chord}; using default`)
       return ['C3', 'E3', 'G3', 'B3']
     }
 
@@ -141,12 +138,11 @@ export class JazzPlayer {
   }
 
   /**
-   * 检查浏览器是否支持 Web Audio
+   * Check whether the browser supports Web Audio.
    */
   static isSupported(): boolean {
     return !!(window.AudioContext || (window as any).webkitAudioContext)
   }
 }
 
-// 导出单例
 export const jazzPlayer = new JazzPlayer()

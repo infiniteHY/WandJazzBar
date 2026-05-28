@@ -9,7 +9,7 @@ import './styles.css'
 export default function JazzBarPage() {
   useEffect(() => {
     if (!window.AudioContext && !(window as any).webkitAudioContext) {
-      alert('您的浏览器不支持音频播放，请使用 Chrome 或 Firefox')
+      alert('Your browser does not support audio playback. Please use Chrome or Firefox.')
     }
   }, [])
 

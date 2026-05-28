@@ -8,11 +8,11 @@ export interface MixingParams {
 }
 
 /**
- * 构造 JazzTrack 唯一键
+ * Build the unique JazzTrack key.
  *
- * 规则：{base_spirit}_{sorted_ingredients}_{mood}_{mood_intensity}_{ice_level}_{shake_level}
+ * Format: {base_spirit}_{sorted_ingredients}_{mood}_{mood_intensity}_{ice_level}_{shake_level}
  *
- * 示例：whiskey_lemon+smoke_sad_3_heavy_medium
+ * Example: whiskey_lemon+smoke_sad_3_heavy_medium
  */
 export function buildJazzTrackId(params: MixingParams): string {
   const sortedIngredients = [...params.ingredients].sort().join('+')
@@ -20,7 +20,7 @@ export function buildJazzTrackId(params: MixingParams): string {
 }
 
 /**
- * 验证调酒参数有效性
+ * Validate cocktail-mixing parameters.
  */
 export function validateMixingParams(params: Partial<MixingParams>): params is MixingParams {
   return !!(

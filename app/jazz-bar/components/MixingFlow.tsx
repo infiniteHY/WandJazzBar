@@ -74,8 +74,8 @@ export default function MixingFlow() {
           </p>
         </div>
 
-        {/* Row 1: Step1 + Step2 — stacked on mobile, side-by-side on md+ */}
-        <div className="flex flex-col gap-2 md:grid md:grid-cols-2 md:min-h-0">
+        {/* Row 1: Step1 + Step2 */}
+        <div className="mixing-row-top flex flex-col gap-2 md:grid md:grid-cols-2 md:min-h-0">
           <div className="jazz-section fade-in-up stagger-1 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
@@ -89,12 +89,12 @@ export default function MixingFlow() {
           <Step3Mood />
         </div>
 
-        {/* Row 3: Step4 full width — 卡片风格同03 */}
+        {/* Row 3: Step4 full width */}
         <div className="jazz-section fade-in-up stagger-4 flex flex-col" style={{ padding: '10px 14px' }}>
           <Step4IceLevel expanded />
         </div>
 
-        {/* Row 4: Step5 full width — 卡片风格同03 */}
+        {/* Row 4: Step5 full width */}
         <div className="jazz-section fade-in-up stagger-5 flex flex-col" style={{ padding: '10px 14px' }}>
           <Step5Shake expanded />
         </div>
@@ -159,11 +159,18 @@ function StartScreen() {
         <div className="neon-sign mb-5 fade-in-up">
           <h1 className="neon-sign-text text-3xl sm:text-4xl md:text-6xl leading-relaxed">WAND JAZZ BAR</h1>
         </div>
-        <p className="subtitle-glow text-xs sm:text-sm md:text-base mb-6 fade-in-up" style={{ animationDelay: '0.2s', fontFamily: "'Press Start 2P', cursive" }}>
-          COCKTAIL x JAZZ
+        <p className="subtitle-glow text-xs sm:text-sm md:text-base mb-5 fade-in-up" style={{ animationDelay: '0.2s', fontFamily: "'Press Start 2P', cursive" }}>
+          WAND x JAZZ
         </p>
-        <div className="mb-6 fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <p className="leading-loose text-sm sm:text-base md:text-lg" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(245,245,245,0.45)', fontWeight: 300 }}>
+        <div className="mb-6 fade-in-up space-y-4" style={{ animationDelay: '0.3s' }}>
+          <p className="text-sm sm:text-base" style={{ fontFamily: "'Playfair Display', serif", color: 'rgba(255,140,66,0.5)', fontStyle: 'italic', letterSpacing: '0.08em' }}>
+            Wünschelrute · 魔杖
+          </p>
+          <p className="leading-loose text-sm sm:text-base md:text-lg" style={{ fontFamily: "'Playfair Display', serif", color: 'rgba(245,245,245,0.5)', fontWeight: 400, fontStyle: 'italic' }}>
+            Schläft ein Lied in allen Dingen, Die da träumen fort und fort,<br />
+            Und die Welt hebt an zu singen, Triffst du nur das Zauberwort.
+          </p>
+          <p className="leading-loose text-sm sm:text-base md:text-lg" style={{ fontFamily: "'Noto Serif SC', serif", color: 'rgba(245,245,245,0.42)', fontWeight: 400 }}>
             乐曲催着万事万物入眠，梦境无限蔓延；<br />
             世界的歌声开始起舞翩翩，你将会感受音乐的法力无边。
           </p>
