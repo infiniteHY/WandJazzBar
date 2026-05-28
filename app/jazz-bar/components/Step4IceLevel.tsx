@@ -8,13 +8,13 @@ const ICE_LEVELS = [
   { id: 'heavy', name: 'Heavy', icon: '❄️', desc: 'SYNC',   color: '#c084fc' }
 ]
 
-export default function Step4IceLevel({ compact = false, expanded = false }: { compact?: boolean; expanded?: boolean }) {
+export default function Step4IceLevel() {
   const { state, dispatch } = useJazzBar()
 
   return (
-    <div className={expanded ? 'flex flex-col flex-1' : ''}>
-      <h2 className={`section-title ${expanded ? 'mb-1.5' : 'mb-2'}`}>04 · ICE</h2>
-      <div className={`grid grid-cols-3 ${compact ? 'gap-1' : 'gap-1.5'} ${expanded ? 'flex-1' : ''}`}>
+    <div>
+      <h2 className="section-title mb-2">04 · ICE</h2>
+      <div className="grid grid-cols-3 gap-1.5">
         {ICE_LEVELS.map(ice => {
           const isSelected = state.mixingParams.ice_level === ice.id
           return (

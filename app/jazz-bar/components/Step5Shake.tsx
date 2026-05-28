@@ -8,13 +8,13 @@ const SHAKE_LEVELS = [
   { id: 'hard',   name: 'Wild', icon: '💥', desc: 'WILD',   color: '#ff6b9d' }
 ]
 
-export default function Step5Shake({ compact = false, expanded = false }: { compact?: boolean; expanded?: boolean }) {
+export default function Step5Shake() {
   const { state, dispatch } = useJazzBar()
 
   return (
-    <div className={expanded ? 'flex flex-col flex-1' : ''}>
-      <h2 className={`section-title ${expanded ? 'mb-1.5' : 'mb-2'}`}>05 · SHAKE</h2>
-      <div className={`grid grid-cols-3 ${compact ? 'gap-1' : 'gap-1.5'} ${expanded ? 'flex-1' : ''}`}>
+    <div>
+      <h2 className="section-title mb-2">05 · SHAKE</h2>
+      <div className="grid grid-cols-3 gap-1.5">
         {SHAKE_LEVELS.map(shake => {
           const isSelected = state.mixingParams.shake_level === shake.id
           return (

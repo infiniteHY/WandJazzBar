@@ -79,7 +79,7 @@ export default function MixingFlow() {
           <div className="jazz-section fade-in-up stagger-1 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
-          <div className="jazz-section fade-in-up stagger-2 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
+          <div className="jazz-section fade-in-up stagger-2" style={{ padding: '10px 14px' }}>
             <Step2Ingredients />
           </div>
         </div>

@@ -584,11 +584,10 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ═══════════════════════════════════════════════
-   PC-ONLY STYLES (min-width: 768px)
-   All rules below only apply to desktop/tablet.
+   LAYOUT — Elastic flow, scrollable on all screens
    ═══════════════════════════════════════════════ */
 
-/* ── Responsive Mixing Container ── */
+/* ── Mixing Container ── */
 .jazz-mixing-container {
   min-height: 100svh;
 }
