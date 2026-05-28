@@ -82,14 +82,21 @@ export async function GET(request: NextRequest) {
       let generated
       try {
         console.log('[Jazz API] Generating track:', trackId)
+        console.log('[Jazz API] ENV check:', {
+          baseUrl: process.env.VECTRUST_BASE_URL || '(missing)',
+          model: process.env.VECTRUST_MODEL || '(missing)',
+          keyPrefix: (process.env.VECTRUST_API_KEY || '').slice(0, 8) + '...',
+        })
         generated = await generateWithVectrust(params)
         console.log('[Jazz API] Track generated')
       } catch (error) {
         console.error('[Jazz API] Vectrust generation failed:', error)
+        const errDetail = error instanceof Error ? { message: error.message, name: error.name, stack: error.stack?.slice(0, 500) } : error
+        console.error('[Jazz API] Error detail:', JSON.stringify(errDetail))
         return NextResponse.json({
           success: false,
           error: 'Track generation failed',
-          message: error instanceof Error ? error.message : 'Unknown generation error'
+          message: error instanceof Error ? `${error.name}: ${error.message}` : 'Unknown generation error'
         }, { status: 502 })
       }
 
