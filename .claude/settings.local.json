@@ -4,7 +4,8 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(npx prisma:*)",
-      "WebFetch(domain:develop-docs.second.me)"
+      "WebFetch(domain:develop-docs.second.me)",
+      "Bash(npx tsc *)"
     ]
   }
 }

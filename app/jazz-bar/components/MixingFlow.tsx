@@ -67,16 +67,16 @@ export default function MixingFlow() {
 
         {/* Title */}
         <div className="text-center fade-in-up">
-          <h1 className="neon-sign-text text-lg md:text-2xl leading-tight">WAND JAZZ BAR</h1>
-          <div className="neon-divider max-w-xs mx-auto my-1" />
-          <p className="text-xs tracking-widest" style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', color: 'rgba(160,160,160,0.5)' }}>
+          <h1 className="neon-sign-text text-2xl md:text-4xl leading-tight">WAND JAZZ BAR</h1>
+          <div className="neon-divider max-w-xs mx-auto my-2" />
+          <p className="text-sm md:text-base tracking-widest" style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', color: 'rgba(160,160,160,0.5)' }}>
             Select your cocktail parameters
           </p>
         </div>
 
         {/* Row 1: Step1 + Step2 */}
-        <div className="mixing-row-top flex flex-col gap-2 md:grid md:grid-cols-2 md:min-h-0">
-          <div className="jazz-section fade-in-up stagger-1 flex flex-col md:overflow-hidden" style={{ padding: '10px 14px' }}>
+        <div className="mixing-row-top">
+          <div className="jazz-section fade-in-up stagger-1" style={{ padding: '10px 14px' }}>
             <Step1BaseSpirit />
           </div>
           <div className="jazz-section fade-in-up stagger-2" style={{ padding: '10px 14px' }}>
@@ -90,12 +90,12 @@ export default function MixingFlow() {
         </div>
 
         {/* Row 3: Step4 full width */}
-        <div className="jazz-section fade-in-up stagger-4 flex flex-col" style={{ padding: '10px 14px' }}>
+        <div className="jazz-section fade-in-up stagger-4" style={{ padding: '10px 14px' }}>
           <Step4IceLevel expanded />
         </div>
 
         {/* Row 4: Step5 full width */}
-        <div className="jazz-section fade-in-up stagger-5 flex flex-col" style={{ padding: '10px 14px' }}>
+        <div className="jazz-section fade-in-up stagger-5" style={{ padding: '10px 14px' }}>
           <Step5Shake expanded />
         </div>
 

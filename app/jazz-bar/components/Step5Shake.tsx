@@ -8,7 +8,7 @@ const SHAKE_LEVELS = [
   { id: 'hard',   name: 'Wild', icon: '💥', desc: 'WILD',   color: '#ff6b9d' }
 ]
 
-export default function Step5Shake() {
+export default function Step5Shake({ expanded }: { expanded?: boolean }) {
   const { state, dispatch } = useJazzBar()
 
   return (

@@ -1,12 +1,12 @@
-import Anthropic from '@anthropic-ai/sdk'
+import OpenAI from 'openai'
 import { MixingParams } from './utils'
 
-const client = new Anthropic({
+const client = new OpenAI({
   apiKey: process.env.VECTRUST_API_KEY || '',
-  baseURL: process.env.VECTRUST_BASE_URL || 'https://api.openai-next.com',
+  baseURL: process.env.VECTRUST_BASE_URL || 'https://api.xiaomimimo.com/v1',
 })
 
-const MODEL = process.env.VECTRUST_MODEL || 'claude-opus-4-7'
+const MODEL = process.env.VECTRUST_MODEL || 'mimo-v2.5-pro'
 
 export interface GeneratedTrack {
   id: string
@@ -329,7 +329,7 @@ function extractJSON(text: string): string {
 }
 
 /**
- * Main generation function using the Anthropic-compatible Vectrust API.
+ * Main generation function using OpenAI-compatible API.
  */
 export async function generateWithVectrust(
   params: MixingParams
@@ -338,27 +338,26 @@ export async function generateWithVectrust(
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-    const response = await client.messages.create({
+    const response = await client.chat.completions.create({
       model: MODEL,
       max_tokens: 8192,
       temperature: 0.4,
       messages: [
         {
+          role: "system",
+          content: buildSystemPrompt()
+        },
+        {
           role: "user",
-          content: `${buildSystemPrompt()}\n\n${buildUserPrompt(params)}`
+          content: buildUserPrompt(params)
         }
       ]
     })
 
-    let text = ""
-    for (const block of response.content) {
-      if (block.type === "text") {
-        text += block.text
-      }
-    }
+    const text = response.choices[0]?.message?.content || ""
     if (!text) throw new Error("Empty response")
 
-    console.log("[Vectrust] stop_reason:", response.stop_reason, "usage:", JSON.stringify(response.usage))
+    console.log("[Vectrust] finish_reason:", response.choices[0]?.finish_reason, "usage:", JSON.stringify(response.usage))
     console.log("[Vectrust] raw:", text.slice(0, 200), "...(length:", text.length, ")")
 
     /**

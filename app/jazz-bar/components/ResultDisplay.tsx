@@ -112,7 +112,7 @@ export default function ResultDisplay() {
           </div>
 
           {/* ── Poems ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+          <div className="grid grid-cols-2 gap-3 mb-5">
             <div style={{ background: '#0d0d0d', border: '0.5px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '14px 16px', borderLeft: '2px solid rgba(255,140,66,0.4)' }}>
               <div style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '9px', color: 'rgba(255,140,66,0.55)', marginBottom: 10, letterSpacing: '0.05em' }}>诗 · 中文</div>
               <div style={{ fontFamily: "'Noto Serif SC', serif", fontSize: 14, color: 'rgba(245,245,245,0.75)', lineHeight: 2 }}>

@@ -8,7 +8,7 @@ const ICE_LEVELS = [
   { id: 'heavy', name: 'Heavy', icon: '❄️', desc: 'SYNC',   color: '#c084fc' }
 ]
 
-export default function Step4IceLevel() {
+export default function Step4IceLevel({ expanded }: { expanded?: boolean }) {
   const { state, dispatch } = useJazzBar()
 
   return (

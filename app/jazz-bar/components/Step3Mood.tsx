@@ -47,7 +47,7 @@ export default function Step3Mood() {
         })}
       </div>
 
-      <div className="px-1">
+      <div className="px-1 py-1">
         <input
           type="range"
           min="1" max="5" step="1"
@@ -56,16 +56,33 @@ export default function Step3Mood() {
           className="mood-slider"
           style={{ '--value': `${fillPct}%` } as React.CSSProperties}
         />
-        <div className="flex justify-between mt-1">
-          <span style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px', color: 'rgba(160,160,160,0.35)' }}>SOFT</span>
-          <div className="flex gap-3">
+        <div className="flex justify-between mt-2">
+          <span style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '9px', color: 'rgba(160,160,160,0.45)' }}>SOFT</span>
+          <div className="flex gap-4">
             {[1,2,3,4,5].map(n => (
-              <span key={n} style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px', color: n <= intensity ? (selectedMood?.color || 'var(--neon-purple)') : 'rgba(160,160,160,0.2)', textShadow: n <= intensity ? `0 0 4px ${selectedMood?.color || 'rgba(192,132,252,0.3)'}` : 'none' }}>
+              <button
+                key={n}
+                onClick={() => dispatch({ type: 'SET_MOOD', mood: state.mixingParams.mood || '', intensity: n })}
+                style={{
+                  fontFamily: "'Press Start 2P', cursive",
+                  fontSize: '10px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '4px 2px',
+                  color: n <= intensity ? (selectedMood?.color || 'var(--neon-purple)') : 'rgba(160,160,160,0.25)',
+                  textShadow: n <= intensity ? `0 0 6px ${selectedMood?.color || 'rgba(192,132,252,0.4)'}` : 'none',
+                  transition: 'color 0.15s, text-shadow 0.15s, transform 0.1s',
+                }}
+                onMouseDown={e => { (e.target as HTMLElement).style.transform = 'scale(1.3)' }}
+                onMouseUp={e => { (e.target as HTMLElement).style.transform = 'scale(1)' }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.transform = 'scale(1)' }}
+              >
                 {n}
-              </span>
+              </button>
             ))}
           </div>
-          <span style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '7px', color: 'rgba(160,160,160,0.35)' }}>WILD</span>
+          <span style={{ fontFamily: "'Press Start 2P', cursive", fontSize: '9px', color: 'rgba(160,160,160,0.45)' }}>WILD</span>
         </div>
       </div>
     </div>
