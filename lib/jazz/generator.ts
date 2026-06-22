@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { MixingParams } from './utils'
+import { composeMelody, chooseInstruments, parseChord } from './theory'
 
 const client = new OpenAI({
   apiKey: process.env.VECTRUST_API_KEY || '',
@@ -329,6 +330,23 @@ function extractJSON(text: string): string {
 }
 
 /**
+ * Ensure exactly four well-formed chord symbols. Anything unparseable or
+ * missing is replaced with the key's tonic chord so the engine never breaks.
+ */
+function normalizeChords(chords: unknown, key: string): string[] {
+  const tonic = (key || 'C Major').match(/^([A-Ga-g][#b]?)/)?.[1] || 'C'
+  const fallback = /min/i.test(key || '') ? `${tonic}m7` : `${tonic}maj7`
+  const list = Array.isArray(chords) ? chords.map(c => String(c).trim()) : []
+  const cleaned = list
+    .filter(c => c && /^[A-Ga-g]/.test(c))
+    .map(c => {
+      try { parseChord(c); return c } catch { return fallback }
+    })
+  while (cleaned.length < 4) cleaned.push(cleaned[cleaned.length - 2] || fallback)
+  return cleaned.slice(0, 4)
+}
+
+/**
  * Main generation function using OpenAI-compatible API.
  */
 export async function generateWithVectrust(
@@ -397,11 +415,25 @@ export async function generateWithVectrust(
       !parsed.id ||
       !parsed.music ||
       !parsed.music.track_name_en ||
-      !parsed.music.melody ||
-      parsed.music.melody.length < 8
+      !parsed.music.chord_progression
     ) {
       throw new Error("Incomplete structure")
     }
+
+      // ── Music-theory pass ──
+      // Trust the model for taste (key, chords, mood, poem, titles) but
+      // synthesise the actual notes so the result is always consonant and the
+      // displayed chords/instruments match what is heard.
+      const music = parsed.music
+      music.chord_progression = normalizeChords(music.chord_progression, music.key)
+      music.melody = composeMelody({
+        key: music.key,
+        chords: music.chord_progression,
+        moodIntensity: params.mood_intensity,
+        ingredients: params.ingredients,
+        seed: `${parsed.id || ''}|${music.key}|${music.chord_progression.join(',')}`,
+      })
+      music.instruments = chooseInstruments(music.style, params.mood_intensity)
 
       return parsed
     } catch (err) {

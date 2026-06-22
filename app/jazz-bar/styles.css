@@ -598,6 +598,209 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 15px rgba(255, 140, 66, 0.1);
 }
 
+/* ── Share buttons ── */
+.share-btn {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 8px;
+  padding: 10px 16px;
+  color: var(--jazz-white-dim);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.06em;
+}
+
+.share-btn:hover:not(:disabled) {
+  color: var(--neon-orange);
+  border-color: rgba(255, 140, 66, 0.35);
+  box-shadow: 0 0 14px rgba(255, 140, 66, 0.12);
+}
+
+.share-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.share-btn-primary {
+  color: var(--neon-orange);
+  border-color: rgba(255, 140, 66, 0.45);
+  background: rgba(255, 140, 66, 0.08);
+}
+
+/* ── Top navigation ── */
+.jazz-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  background: rgba(8, 8, 12, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-wrap: wrap;
+}
+.jazz-nav-brand {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(56, 189, 248, 0.75);
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+.jazz-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.jazz-nav-tab {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: rgba(160, 160, 160, 0.6);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 9px 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.22s ease;
+}
+.jazz-nav-tab:hover {
+  color: var(--neon-orange);
+  border-color: rgba(255, 140, 66, 0.35);
+}
+.jazz-nav-tab.is-active {
+  color: var(--neon-orange);
+  border-color: rgba(255, 140, 66, 0.5);
+  background: rgba(255, 140, 66, 0.1);
+  box-shadow: 0 0 14px rgba(255, 140, 66, 0.15);
+}
+.jazz-nav-venue {
+  color: rgba(192, 132, 252, 0.75);
+  border-color: rgba(192, 132, 252, 0.3);
+}
+.jazz-nav-venue:hover {
+  color: var(--neon-purple);
+  border-color: rgba(192, 132, 252, 0.6);
+}
+
+/* ── Library ── */
+.library-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 20px 60px;
+}
+.library-head { text-align: center; margin-bottom: 32px; }
+.library-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: clamp(20px, 4vw, 30px);
+  color: #f5f5f5;
+  letter-spacing: 0.05em;
+}
+.library-sub {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: rgba(160, 160, 160, 0.6);
+  margin-top: 8px;
+}
+.library-empty {
+  text-align: center;
+  font-family: 'Noto Serif SC', serif;
+  color: rgba(160, 160, 160, 0.6);
+  padding: 60px 0;
+}
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+.library-card {
+  text-align: left;
+  background: #0d0d0d;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(255, 140, 66, 0.4);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.library-card:hover {
+  border-color: rgba(255, 140, 66, 0.5);
+  box-shadow: 0 0 18px rgba(255, 140, 66, 0.12);
+  transform: translateY(-2px);
+}
+.library-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.library-card-zh {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px;
+  color: #f5f5f5;
+}
+.library-card-play {
+  color: var(--neon-orange);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.library-card-en {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: rgba(160, 160, 160, 0.7);
+  margin-top: 4px;
+}
+.library-card-meta {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  color: rgba(160, 160, 160, 0.5);
+  margin-top: 6px;
+}
+.library-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.library-tag {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 7px;
+  color: rgba(192, 132, 252, 0.7);
+  border: 1px solid rgba(192, 132, 252, 0.25);
+  border-radius: 4px;
+  padding: 4px 7px;
+}
+
+/* ── Venue / scene mode entry link ── */
+.scene-link {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 50;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  color: rgba(160, 160, 160, 0.5);
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.scene-link:hover {
+  color: var(--neon-purple);
+  border-color: rgba(192, 132, 252, 0.4);
+}
+
 /* ── Missing items hint ── */
 .missing-hint {
   font-family: 'Press Start 2P', cursive;

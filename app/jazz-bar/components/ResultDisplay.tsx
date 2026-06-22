@@ -3,6 +3,8 @@
 import { useEffect } from 'react'
 import { useJazzBar } from '../context/JazzBarContext'
 import MusicPlayer from './MusicPlayer'
+import ShareCard from './ShareCard'
+import type { ShareableMix } from '@/lib/jazz/share'
 
 export default function ResultDisplay() {
   const { state, dispatch } = useJazzBar()
@@ -23,7 +25,6 @@ export default function ResultDisplay() {
       mood_intensity: state.mixingParams.mood_intensity.toString(),
       ice_level: state.mixingParams.ice_level!,
       shake_level: state.mixingParams.shake_level!,
-      force: 'true',
     })
     state.mixingParams.ingredients.forEach(ing => params.append('ingredients', ing))
 
@@ -132,6 +133,19 @@ export default function ResultDisplay() {
             <MusicPlayer track={track} />
           </div>
         </div>
+
+        {/* ── Share card ── */}
+        <ShareCard
+          track={track}
+          mix={{
+            base_spirit: state.mixingParams.base_spirit!,
+            ingredients: state.mixingParams.ingredients,
+            mood: state.mixingParams.mood!,
+            mood_intensity: state.mixingParams.mood_intensity,
+            ice_level: state.mixingParams.ice_level!,
+            shake_level: state.mixingParams.shake_level!,
+          } as ShareableMix}
+        />
 
         {/* ── Back button ── */}
         <div className="text-center mt-6">

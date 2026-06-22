@@ -2,22 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import * as Tone from 'tone'
+import { chordVoicing } from '@/lib/jazz/theory'
 
-const CHORD_MAP: Record<string, string[]> = {
-  'Cmaj7': ['C4','E4','G4','B4'], 'C7':    ['C4','E4','G4','Bb4'], 'Cm7':   ['C4','Eb4','G4','Bb4'],
-  'Dmaj7': ['D4','F#4','A4','C#5'], 'D7':  ['D4','F#4','A4','C5'],  'Dm7':  ['D4','F4','A4','C5'],
-  'Emaj7': ['E4','G#4','B4','D#5'], 'E7':  ['E4','G#4','B4','D5'],  'Em7':  ['E4','G4','B4','D5'],
-  'Fmaj7': ['F4','A4','C5','E5'],   'F7':  ['F4','A4','C5','Eb5'],  'Fm7':  ['F4','Ab4','C5','Eb5'],
-  'Gmaj7': ['G3','B3','D4','F#4'],  'G7':  ['G3','B3','D4','F4'],   'Gm7':  ['G3','Bb3','D4','F4'],
-  'Amaj7': ['A3','C#4','E4','G#4'], 'A7':  ['A3','C#4','E4','G4'],  'Am7':  ['A3','C4','E4','G4'],
-  'Bmaj7': ['B3','D#4','F#4','A#4'],'B7':  ['B3','D#4','F#4','A4'], 'Bm7':  ['B3','D4','F#4','A4'],
-  'F#dim7':['F#3','A3','C4','Eb4'], 'Bdim7':['B3','D4','F4','Ab4'],
-}
-
+// Voice every chord symbol from the shared theory engine so what you hear
+// always matches the chord name shown on screen.
 function chordToNotes(chord: string): string[] {
-  if (CHORD_MAP[chord]) return CHORD_MAP[chord]
-  const key = Object.keys(CHORD_MAP).find(k => chord.startsWith(k.slice(0, 2)))
-  return key ? CHORD_MAP[key] : ['C4','E4','G4']
+  return chordVoicing(chord, 3)
 }
 
 function bassNote(note: string): string {
@@ -54,6 +44,14 @@ export default function MusicPlayer({ track }: { track: any }) {
   const chords: string[] = JSON.parse(track.chord_progression)
   const melody: Array<{ note: string; duration: string; time: number }> = JSON.parse(track.melody)
   const totalDuration = melody.length > 0 ? melody[melody.length - 1].time + 4 : 16
+
+  // Instruments the engine should actually render (so cards match the audio).
+  let instruments: string[] = []
+  try { instruments = JSON.parse(track.instruments) } catch {}
+  if (!Array.isArray(instruments) || instruments.length === 0) {
+    instruments = ['piano', 'chord', 'bass', 'saxophone']
+  }
+  const hasInst = (name: string) => instruments.includes(name)
 
   const stopInterval = () => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
@@ -140,19 +138,27 @@ export default function MusicPlayer({ track }: { track: any }) {
         const bNote   = bassNote(notes[0])
         const saxNote = notes[1] || notes[0]
 
-        Tone.Transport.schedule((t) => {
-          chordSynth.triggerAttackRelease(notes, '2n', t)
-          setActiveChord(i); setActiveInst('chord')
-        }, i * 2)
-        Tone.Transport.schedule((t) => {
-          bassSynth.triggerAttackRelease(bNote, '4n', t)
-          setActiveInst('bass')
-        }, i * 2)
-        Tone.Transport.schedule((t) => { bassSynth.triggerAttackRelease(bNote, '8n', t) }, i * 2 + 1)
-        Tone.Transport.schedule((t) => {
-          saxSynth.triggerAttackRelease([saxNote], '8n', t)
-          setActiveInst('saxophone')
-        }, i * 2 + SAX_OFFSETS[i % SAX_OFFSETS.length])
+        if (hasInst('chord')) {
+          Tone.Transport.schedule((t) => {
+            chordSynth.triggerAttackRelease(notes, '2n', t)
+            setActiveChord(i); setActiveInst('chord')
+          }, i * 2)
+        } else {
+          Tone.Transport.schedule((t) => { setActiveChord(i) }, i * 2)
+        }
+        if (hasInst('bass')) {
+          Tone.Transport.schedule((t) => {
+            bassSynth.triggerAttackRelease(bNote, '4n', t)
+            setActiveInst('bass')
+          }, i * 2)
+          Tone.Transport.schedule((t) => { bassSynth.triggerAttackRelease(bNote, '8n', t) }, i * 2 + 1)
+        }
+        if (hasInst('saxophone')) {
+          Tone.Transport.schedule((t) => {
+            saxSynth.triggerAttackRelease([saxNote], '8n', t)
+            setActiveInst('saxophone')
+          }, i * 2 + SAX_OFFSETS[i % SAX_OFFSETS.length])
+        }
       })
 
       Tone.Transport.schedule(() => {
@@ -198,7 +204,7 @@ export default function MusicPlayer({ track }: { track: any }) {
   const isPaused  = playerState === 'paused'
   const isIdle    = playerState === 'idle'
 
-  const displayInsts = ['piano', 'chord', 'bass', 'saxophone']
+  const displayInsts = ['piano', ...instruments.filter(i => i !== 'piano' && INST_META[i])]
 
   return (
     <div>

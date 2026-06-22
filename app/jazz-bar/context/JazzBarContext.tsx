@@ -3,6 +3,7 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react'
 
 type JazzBarState = {
+  view: 'mix' | 'library'
   currentStep: 'start' | 'step1' | 'step2' | 'step3' | 'step4' | 'step5' | 'result'
   mixingParams: {
     base_spirit: string | null
@@ -25,6 +26,8 @@ type JazzBarAction =
   | { type: 'SET_ICE_LEVEL'; level: string }
   | { type: 'SET_SHAKE_LEVEL'; level: string }
   | { type: 'SET_TRACK'; track: any }
+  | { type: 'SET_VIEW'; view: JazzBarState['view'] }
+  | { type: 'LOAD_TRACK'; track: any }
   | { type: 'TOGGLE_PLAY' }
   | { type: 'SET_LOADING'; loading: boolean }
   | { type: 'RESET' }
@@ -77,6 +80,32 @@ function jazzBarReducer(state: JazzBarState, action: JazzBarAction): JazzBarStat
     case 'SET_TRACK':
       return { ...state, currentTrack: action.track }
 
+    case 'SET_VIEW':
+      return { ...state, view: action.view }
+
+    // Load a saved track for playback: sync the cocktail params (so the share
+    // card / link stay correct) and jump to the result screen.
+    case 'LOAD_TRACK': {
+      const t = action.track
+      let ingredients: string[] = []
+      try { ingredients = JSON.parse(t.ingredients) } catch {}
+      return {
+        ...state,
+        view: 'mix',
+        currentStep: 'result',
+        currentTrack: t,
+        isLoading: false,
+        mixingParams: {
+          base_spirit: t.base_spirit ?? null,
+          ingredients,
+          mood: t.mood ?? null,
+          mood_intensity: t.mood_intensity ?? 3,
+          ice_level: t.ice_level ?? null,
+          shake_level: t.shake_level ?? null,
+        },
+      }
+    }
+
     case 'TOGGLE_PLAY':
       return { ...state, isPlaying: !state.isPlaying }
 
@@ -92,6 +121,7 @@ function jazzBarReducer(state: JazzBarState, action: JazzBarAction): JazzBarStat
 }
 
 const initialState: JazzBarState = {
+  view: 'mix',
   currentStep: 'start',
   mixingParams: {
     base_spirit: null,
